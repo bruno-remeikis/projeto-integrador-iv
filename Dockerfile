@@ -12,11 +12,10 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-#RUN python -m pip install --upgrade pip
 RUN pip install --upgrade pip
-#RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt
 #RUN pip install "unstructured[all-docs]"
-RUN pip install unstructured[pdf]
+#RUN pip install unstructured[pdf]
 
 COPY . .
 

@@ -1,1 +1,4 @@
-unstructured
+unstructured[all-docs,image]
+pytesseract
+openai
+transformers
