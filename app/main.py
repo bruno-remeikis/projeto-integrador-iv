@@ -2,8 +2,7 @@ from unstructured.partition.auto import partition
 import pytesseract
 from PIL import Image
 
-from ai_managers.ai_manager import AiManager
-from ai_managers.mdberta_manager import MdbertaManager
+from ai_service import processTest
 
 
 def get_file_extension(file_name: str):
@@ -36,7 +35,8 @@ if __name__ == '__main__':
     #file_name = 'redacao-o_narcisismo_e_a_cultura_das_selfies-karina_rossi.pdf'
     #file_name = 'redacao-nota-mil-enem-2023-rafaela-muller.jpg'
     #file_name = 'LSI - Atividade 1.pdf'
-    file_name = 'Questionário de História.docx'
+    #file_name = 'Questionário de História.docx'
+    file_name = 'Questionário de História com erros.docx'
     path = 'resources/' + file_name
     extension = get_file_extension(file_name)
     
@@ -49,7 +49,6 @@ if __name__ == '__main__':
     print('\n\n-- Texto extraído --')    
     print(text)
     
-    aiManager: AiManager = MdbertaManager()
-    ai_response = aiManager.ask("Quem é você?")
+    test_result = processTest(text)
     print('\n\n-- Resposta da IA --')
-    print(ai_response)
+    print(test_result)

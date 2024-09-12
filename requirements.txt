@@ -2,3 +2,4 @@ unstructured[all-docs,image]
 pytesseract
 openai
 transformers
+google-generativeai
