@@ -7,10 +7,19 @@ Desenvolvido por:
 
 ## Get Started
 
-É necessário ter o [Docker](https://www.docker.com/get-started/) instalado e rodando em sua máquina
+Crie o arquivo chamado `.env` na raiz deste projeto.\
+Neste arquivo, cole as variáveis abaixo e preencha-as ou altere-as de
+acordo com sua necessidade.
+```properties
+GOOGLEAI_API_KEY=
+FASTAPI_HOST=0.0.0.0
+FASTAPI_PORT=8000
+```
+
+Para rodar a aplicação, é necessário ter o [Docker](https://www.docker.com/get-started/) instalado e rodando em sua máquina.
 
 ### Construir imagem
-Para construirmos a imagem da aplicação, execute: 
+Antes de, de fato, rodarmos a aplicação, precisamos construir sua imagem Docker. Para isso, execute: 
 ```sh
 docker compose build
 ```

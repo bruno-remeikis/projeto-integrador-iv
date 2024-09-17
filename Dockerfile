@@ -12,11 +12,10 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --upgrade pip
+#RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
-#RUN pip install "unstructured[all-docs]"
-#RUN pip install unstructured[pdf]
 
 COPY . .
 
-CMD ["python", "main.py"]
+#CMD ["python", "main.py"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

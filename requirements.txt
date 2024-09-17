@@ -1,5 +1,13 @@
+# -- API --
+fastapi
+uvicorn
+
+# -- Tratamento de arquivos --
 unstructured[all-docs,image]
 pytesseract
-openai
-transformers
+
+# -- Integração com IA --
+#openai
+#transformers
 google-generativeai
+werkzeug

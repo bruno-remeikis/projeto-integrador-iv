@@ -1,54 +1,43 @@
-from unstructured.partition.auto import partition
-import pytesseract
-from PIL import Image
+from fastapi import FastAPI, File, UploadFile
+from typing import List
+import json
+import os
 
-from ai_service import processTest
-
-
-def get_file_extension(file_name: str):
-    return file_name.split('.')[-1]#.lower()
-
+import file_processor as fp
+import ai_service
+from exceptions.InvalidFileExtensionError import InvalidFileExtensionError
 
 
-def extract_text_from_doc(file_path: str) -> str:
-    # Carrega o documento e extrai partes
-    elements = partition(filename=file_path, languages=["portuguese", "english"], strategy="hi_res")
+# Inicia API
+app = FastAPI()
 
-    # text_parts = []
-    text = ''
-    for element in elements:
-        # text_parts.append(element.text)
-        text += element.text.strip() + '\n'
-
-    # print(text_parts)
-    return text
+# Cria diretório para os arquivos a serem armazenados temporariamente
+os.makedirs(fp.TEMP_DIR, exist_ok=True)
 
 
-def extract_text_from_image(file_path: str) -> str:
-    image = Image.open(file_path)
-    #pytesseract.pytesseract.tesseract_cmd = r'<full_path_to_your_tesseract_executable>'
-    text = pytesseract.image_to_string(image)
-    return text
+@app.get('/')
+async def index():
+    return { "message": "Hello, World!!!!!" }
 
 
-if __name__ == '__main__':
-    #file_name = 'redacao-o_narcisismo_e_a_cultura_das_selfies-karina_rossi.pdf'
-    #file_name = 'redacao-nota-mil-enem-2023-rafaela-muller.jpg'
-    #file_name = 'LSI - Atividade 1.pdf'
-    #file_name = 'Questionário de História.docx'
-    file_name = 'Questionário de História com erros.docx'
-    path = 'resources/' + file_name
-    extension = get_file_extension(file_name)
-    
-    text = ''
-    if(extension in ('jpg', 'png')):
-        text = extract_text_from_image(path)
-    else:
-        text = extract_text_from_doc(path)
-    
-    print('\n\n-- Texto extraído --')    
-    print(text)
-    
-    test_result = processTest(text)
-    print('\n\n-- Resposta da IA --')
-    print(test_result)
+@app.post('/upload')
+async def upload_file_2(files: List[UploadFile] = File(...)):
+    results = []
+    for file in files:
+        try:
+            # Extrai texto do arquivo
+            test_text: str = await fp.process_file(file)
+            # Envia texto para IA
+            test_result: str = ai_service.processTest(test_text)
+            # Converte a resposta da IA de string para JSON
+            json_test_result = json.loads(test_result)
+            results.append(json_test_result)
+        except InvalidFileExtensionError as e:
+            results.append(json.loads({
+                "error": e.message,
+                "file": e.filename
+            }))
+        finally:
+            if file.file is not None:
+                file.file.close()
+    return results
