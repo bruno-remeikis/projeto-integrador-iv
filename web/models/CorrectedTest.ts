@@ -1,13 +1,13 @@
-export type Question = {
+export type TestQuestion = {
     enunciado: string;
     resposta?: string;
-    questoes?: Question[];
+    questoes?: TestQuestion[];
     pontuacao: number;
 }
 
 export type CorrectedTest = {
     area_conhecimento: string | string[];
     nome_aluno: string | string[];
-    questoes: Question[];
+    questoes: TestQuestion[];
     pontuacao: number;
 }

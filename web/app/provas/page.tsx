@@ -1,7 +1,9 @@
+'use client';
+
 import { CorrectedTestTable } from "@/components/CorrectedTestTable";
+import { PageTitle } from "@/components/PageTitle";
 import { CorrectedTest } from "@/models/CorrectedTest";
-import Link from "next/link";
-import { FiArrowLeft } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 const data: CorrectedTest[] = [
     {
@@ -17,19 +19,21 @@ const data: CorrectedTest[] = [
     }
 ]
 
-export default function Provas() {
-    return (
-        <main className="p-3">
-            <div className="flex gap-3 items-center">
-                <Link href='/' className="default-button default-button-always-enabled">
-                    <FiArrowLeft size={20} />
-                </Link>
-                <h2>Avaliações Corrigidas pela IA</h2>
-            </div>
+export default function ProvasPage() {
+    const router = useRouter();
 
-            <div className="section">
-                <CorrectedTestTable data={data} />
-            </div>
-        </main>
+    function handleOnSelectRow(row: CorrectedTest) {
+        router.push('/provas/detalhes');
+    }
+
+    return (
+        <div>
+            <PageTitle goBackTo="/">Avaliações Corrigidas pela IA</PageTitle>
+            <main>
+                <div className="section">
+                    <CorrectedTestTable data={data} onSelectRow={handleOnSelectRow} />
+                </div>
+            </main>
+        </div>
     );
 }

@@ -5,8 +5,9 @@ import { FileTable } from "@/components/FileTable";
 import { concatFileList } from "@/utils/FileListUtils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PageTitle } from "@/components/PageTitle";
 
-export default function Provas() {
+export default function HomePage() {
   const router = useRouter();
 
   const [files, setFiles] = useState<FileList>();
@@ -35,27 +36,28 @@ export default function Provas() {
   }
 
   return (
-    <main className="p-3">
-      <h2>Upload de provas</h2>
-      
-      <div className="section">
-        <InputFile onSelectFiles={handleOnSelectFiles} />
-      </div>
+    <div>
+      <PageTitle>Upload de provas</PageTitle>
+      <main>
+        <div className="section">
+          <InputFile onSelectFiles={handleOnSelectFiles} />
+        </div>
 
-      <div className="section">
-        <FileTable data={files ? Array.from(files) : []} />
-      </div>
+        <div className="section">
+          <FileTable data={files ? Array.from(files) : []} />
+        </div>
 
-      <div className="section flex justify-center">
-        <button
-          type="button"
-          className="default-button"
-          onClick={handleCorrectTests}
-          disabled={!files || files.length === 0}
-        >
-          Corrigir provas com IA
-        </button>
-      </div>
-    </main>
+        <div className="section flex justify-center">
+          <button
+            type="button"
+            className="default-button"
+            onClick={handleCorrectTests}
+            disabled={!files || files.length === 0}
+          >
+            Corrigir provas com IA
+          </button>
+        </div>
+      </main>
+    </div>
   );
 }

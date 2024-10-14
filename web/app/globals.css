@@ -85,12 +85,27 @@ h1 {
 h2 {
   font-size: 1.4rem;
 }
+input,
+textarea {
+  @apply block border px-2 py-1 rounded-sm w-full resize-none;
+}
+main {
+  @apply p-3 md:p-6 lg:p-10;
+}
+
+.bg-primary {
+  @apply bg-blue-500;
+}
+
 .section {
-  @apply pt-3;
+  @apply mt-3;
 }
 .default-button {
-  @apply bg-blue-500 text-white p-3 rounded-md enabled:cursor-pointer enabled:hover:opacity-90 disabled:opacity-75 disabled:cursor-not-allowed transition-all
+  @apply bg-primary text-white p-3 rounded-md enabled:cursor-pointer enabled:hover:opacity-90 disabled:opacity-75 disabled:cursor-not-allowed transition-all
 }
 .default-button-always-enabled {
   @apply cursor-pointer hover:opacity-90
+}
+.form-group {
+  @apply flex flex-col gap-1 pb-3 md:pb-4;
 }

@@ -151,7 +151,12 @@ export const columns: ColumnDef<CorrectedTest>[] = [
   },
 ]
 
-export function CorrectedTestTable({ data }: { data: CorrectedTest[] }) {
+type CorrectedTestTableProps = {
+  data: CorrectedTest[];
+  onSelectRow: (row: CorrectedTest) => void;
+}
+
+export function CorrectedTestTable({ data, onSelectRow }: CorrectedTestTableProps) {
   const [sorting, setSorting] =
     React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] =
@@ -244,6 +249,8 @@ export function CorrectedTestTable({ data }: { data: CorrectedTest[] }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-blue-300 cursor-pointer"
+                  onClick={() => onSelectRow(row.original)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -261,7 +268,7 @@ export function CorrectedTestTable({ data }: { data: CorrectedTest[] }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Ainda sem arquivos
                 </TableCell>
               </TableRow>
             )}

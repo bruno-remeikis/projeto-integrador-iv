@@ -23,7 +23,7 @@ export function InputFile({ onSelectFiles }: InputFileProps) {
         className="default-button default-button-always-enabled flex gap-2 items-center !pr-4"
       >
         <FiFilePlus size={30} />
-        <span>Add file</span>
+        <span>Adicionar arquivo</span>
       </Label>
       <Input
         id="file-input"

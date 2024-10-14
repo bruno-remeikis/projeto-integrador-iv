@@ -258,7 +258,7 @@ export function FileTable({ data }: { data: any[] }) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  Ainda sem arquivos
                 </TableCell>
               </TableRow>
             )}
