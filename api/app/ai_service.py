@@ -7,6 +7,7 @@ ai_connector: AiConnector = GoogleAiCoonnector() #MdbertaConnector()
 
 PROMPT_TEMPLATE = """O texto entre "<<<INICIO>>>" e "<<<FIM>>>" é uma prova educacional.
 Sua resposta deve ser um arquivo JSON, seguindo as seguintes regras:
+- Tente buscar se o nome de quem fez a prova, se não houver essa informação pode devolver "nome_aluno": "Aluno,
 - Identifique a área de conhecimento da prova e informe-a no campo "area_conhecimento" do JSON no formato de texto. Caso identifique mais de uma área de conhecimento, coloque os valores em array;
 - Deve existir um campo "questoes", que será um array. Cada item deste array será um objeto correspondente a uma questão da prova educacional;
 - Identifique na prova educacional o enunciado e a resposta de cada questão da prova. Estes devem estar contidos nos campos "enunciado" e "resposta", respectivamente. Cada uma das questões deve estar contida no array "questoes". Não faça nenhuma alteração no enunciado ou na resposta. Insira-os no JSON da forma como estão na prova educacional;

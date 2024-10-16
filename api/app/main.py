@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 import json
 import os
@@ -7,18 +8,24 @@ import file_processor as fp
 import ai_service
 from exceptions.InvalidFileExtensionError import InvalidFileExtensionError
 
-
 # Inicia API
 app = FastAPI()
+
+# Adiciona middleware de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Ou especifique os domínios permitidos
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Cria diretório para os arquivos a serem armazenados temporariamente
 os.makedirs(fp.TEMP_DIR, exist_ok=True)
 
-
 @app.get('/')
 async def index():
     return { "message": "Hello, World!!!!!" }
-
 
 @app.post('/upload')
 async def upload_file_2(files: List[UploadFile] = File(...)):
@@ -33,10 +40,10 @@ async def upload_file_2(files: List[UploadFile] = File(...)):
             json_test_result = json.loads(test_result)
             results.append(json_test_result)
         except InvalidFileExtensionError as e:
-            results.append(json.loads({
+            results.append({
                 "error": e.message,
                 "file": e.filename
-            }))
+            })
         finally:
             if file.file is not None:
                 file.file.close()
