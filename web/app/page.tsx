@@ -6,6 +6,7 @@ import { concatFileList } from "@/utils/FileListUtils";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "@/components/PageTitle";
+import { CorrectedTest } from "@/models/CorrectedTest";
 
 export default function HomePage() {
   const router = useRouter();
@@ -13,7 +14,6 @@ export default function HomePage() {
 
   function handleOnSelectFiles(newFiles: FileList) {
     const updatedFiles = concatFileList(files, newFiles);
-    console.log("Arquivos selecionados:", updatedFiles);
     setFiles(updatedFiles);
   }
 
@@ -23,34 +23,35 @@ export default function HomePage() {
       return;
     }
 
+    // Monta body da requisição
     const formData = new FormData();
-
     for (let i = 0; i < files.length; i++) {
-      console.log(`Adicionando arquivo: ${files[i].name}`);
       formData.append("files", files[i]);
     }
 
     try {
-      console.log("Enviando requisição de upload para o servidor...");
-
       const response = await fetch("http://localhost:8000/upload", {
         method: "POST",
         body: formData,
       });
-
-      console.log("Resposta recebida:", response);
 
       if (!response.ok) {
         console.error("Erro no status da resposta:", response.statusText);
         throw new Error("Erro ao fazer upload dos arquivos");
       }
 
-      const result = await response.json();
-      console.log("Resposta JSON recebida:", result);
+      const result = await response.json()
+      // Adiciona ID aos resultados
+      const tests = result.map((t: CorrectedTest, i: number) => ({
+        ...t,
+        id: i + 1
+      }));
 
       // Navegando para a página de provas, passando o resultado como parâmetro
-      router.push(`/provas?data=${encodeURIComponent(JSON.stringify(result))}`);
-    } catch (error) {
+      sessionStorage.setItem('tests', JSON.stringify(tests))
+      router.push('/provas');
+    }
+    catch (error) {
       console.error("Erro ao fazer upload:", error);
       alert("Falha ao fazer upload dos arquivos");
     }

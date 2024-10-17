@@ -13,20 +13,17 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -35,8 +32,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { dateTimeFormatter } from "@/utils/DateUtils"
 import { CorrectedTest } from "@/models/CorrectedTest"
+import { join } from "@/utils/StringUtils"
 
 export const columns: ColumnDef<CorrectedTest>[] = [
   // Coluna: checkbox
@@ -67,9 +64,12 @@ export const columns: ColumnDef<CorrectedTest>[] = [
   {
     accessorKey: "nome_aluno",
     header: "Aluno",
-    // cell: ({ row }) => (
-    //   <div className="capitalize">{row.getValue("name")}</div>
-    // ),
+    cell: ({ row }) => {
+      const value: string = row.getValue('nome_aluno');
+      return value
+        ? <div>{ join(value) }</div>
+        : <div className="text-black text-opacity-25 italic">Sem nome</div>
+    },
   },
 
   // Coluna: Nome do Arquivo
@@ -120,7 +120,7 @@ export const columns: ColumnDef<CorrectedTest>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
+    cell: () => {
       // const data = row.original
 
       return (

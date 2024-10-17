@@ -23,9 +23,11 @@ app.add_middleware(
 # Cria diretório para os arquivos a serem armazenados temporariamente
 os.makedirs(fp.TEMP_DIR, exist_ok=True)
 
+
 @app.get('/')
 async def index():
     return { "message": "Hello, World!!!!!" }
+
 
 @app.post('/upload')
 async def upload_file_2(files: List[UploadFile] = File(...)):

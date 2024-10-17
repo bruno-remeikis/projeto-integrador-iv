@@ -6,9 +6,9 @@ export type TestQuestion = {
 };
 
 export type CorrectedTest = {
-  id: string;
+  id: number;
   area_conhecimento: string | string[];
-  nome_aluno: string | string[];
+  nome_aluno: string | string[] | null;
   questoes: TestQuestion[];
   pontuacao: number;
 };
