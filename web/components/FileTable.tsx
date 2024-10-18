@@ -13,20 +13,17 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -37,7 +34,13 @@ import {
 } from "@/components/ui/table"
 import { dateTimeFormatter } from "@/utils/DateUtils"
 
-export const columns: ColumnDef<File>[] = [
+type OnRemoveFileType = (file: File) => void;
+
+type ColumnsProps = {
+  onRemoveFile: OnRemoveFileType;
+}
+
+export const getColumns = ({ onRemoveFile }: ColumnsProps): ColumnDef<File>[] => [
   // Coluna: checkbox
   {
     id: "select",
@@ -61,16 +64,11 @@ export const columns: ColumnDef<File>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-
   // Coluna: Nome do Arquivo
   {
     accessorKey: "name",
     header: "Nome do Arquivo",
-    // cell: ({ row }) => (
-    //   <div className="capitalize">{row.getValue("name")}</div>
-    // ),
   },
-
   // Coluna: Nome do Arquivo
   {
     accessorKey: "uploadDate",
@@ -79,46 +77,11 @@ export const columns: ColumnDef<File>[] = [
       <div>{ dateTimeFormatter.format(row.getValue("uploadDate")) }</div>
     ),
   },
-
-  /*
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-  },
-  {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"))
-
-      // Format the amount as a dollar amount
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount)
-
-      return <div className="text-right font-medium">{formatted}</div>
-    },
-  },*/
-
   // Coluna: Três pontinhos ("...")
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      // const data = row.original
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -129,17 +92,12 @@ export const columns: ColumnDef<File>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem className="text-red-500 cursor-pointer">Remover arquivo</DropdownMenuItem>
-            {/*
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(data.name)}
+              className="text-red-500 cursor-pointer"
+              onClick={() => onRemoveFile(row.original)}
             >
-              Copy payment ID
+              Remover arquivo
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
-            */}
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -147,8 +105,13 @@ export const columns: ColumnDef<File>[] = [
   },
 ]
 
+type FileTableProps = {
+  data: File[];
+  onRemoveFile: OnRemoveFileType;
+}
+
 //! `data` need to be a `FileList`
-export function FileTable({ data }: { data: any[] }) {
+export function FileTable({ data, onRemoveFile }: FileTableProps) {
   const [sorting, setSorting] =
     React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] =
@@ -157,6 +120,8 @@ export function FileTable({ data }: { data: any[] }) {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] =
     React.useState({})
+
+  const columns = getColumns({ onRemoveFile });
 
   const table = useReactTable({
     data,
@@ -179,42 +144,6 @@ export function FileTable({ data }: { data: any[] }) {
 
   return (
     <div className="w-full">
-      {/* <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div> */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>

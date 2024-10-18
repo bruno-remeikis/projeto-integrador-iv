@@ -2,7 +2,7 @@
 
 import { InputFile } from "@/components/InputFile";
 import { FileTable } from "@/components/FileTable";
-import { concatFileList } from "@/utils/FileListUtils";
+import { FileListUtils } from "@/utils/FileListUtils";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "@/components/PageTitle";
@@ -19,8 +19,12 @@ export default function HomePage() {
   const [progress, setProgress] = useState<number>(0);
 
   function handleOnSelectFiles(newFiles: FileList) {
-    const updatedFiles = concatFileList(files, newFiles);
+    const updatedFiles = FileListUtils.concat(files, newFiles);
     setFiles(updatedFiles);
+  }
+
+  function handleOnRemoveFile(file: File) {
+    setFiles(prev => prev ? FileListUtils.remove(prev, file) : prev);
   }
 
   async function handleCorrectTests() {
@@ -69,21 +73,23 @@ export default function HomePage() {
     }
   }
 
+  // Faz um carregamento fake ao carregar resposta da API
   useEffect(() => {
+    const fakeLimit = 90;
     let interval: NodeJS.Timeout;
     if (loading) {
-        interval = setInterval(() => {
-            setProgress(prev => {
-                if (prev >= 70) {
-                    clearInterval(interval);
-                    return 70;
-                }
-                return prev + 2;
-            });
-        }, 60);
+      interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= fakeLimit) {
+            clearInterval(interval);
+            return fakeLimit;
+          }
+          return prev + 2;
+        });
+      }, 60);
     }
     return () => clearInterval(interval);
-}, [loading]);
+  }, [loading]);
 
   return (
     <div>
@@ -94,7 +100,7 @@ export default function HomePage() {
         </div>
 
         <div className="section">
-          <FileTable data={files ? Array.from(files) : []} />
+          <FileTable data={files ? Array.from(files) : []} onRemoveFile={handleOnRemoveFile} />
         </div>
 
         <div className="section flex justify-center">
@@ -116,7 +122,7 @@ export default function HomePage() {
             progress <= 40 ? 'Analisando respostas' :
             'Corrigindo provas'
           */}
-          Corrigindo provas
+            Corrigindo provas
           </span>
           <ProgressBar progress={progress} />
         </Modal>
