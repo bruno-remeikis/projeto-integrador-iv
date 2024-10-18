@@ -9,3 +9,18 @@ export function joinOrEmpty(value: string | string[] | null | undefined) {
         return '';
     return join(value);
 }
+
+export function formatGrade(grade?: number | string) {
+    try {
+        let value: number | string = Math.round(Number(grade) * 100);
+
+        if (!Number.isInteger(value)) {
+            value = value.toFixed(2);
+        }
+
+        return value + '%';
+    }
+    catch (err) {
+        return 'Erro';
+    }
+}

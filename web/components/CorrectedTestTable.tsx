@@ -33,7 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { CorrectedTest } from "@/models/CorrectedTest"
-import { join } from "@/utils/StringUtils"
+import { formatGrade, join } from "@/utils/StringUtils"
 
 export const columns: ColumnDef<CorrectedTest>[] = [
   // Coluna: checkbox
@@ -77,10 +77,9 @@ export const columns: ColumnDef<CorrectedTest>[] = [
     accessorKey: "pontuacao",
     header: "Pontuação",
     cell: ({ row }) => {
-      const pontuacao = row.getValue('pontuacao');
-      return typeof pontuacao === 'number'
-        ? (pontuacao * 100) + '%'
-        : 'Erro'
+
+      const grade: string = row.getValue('pontuacao');
+      return formatGrade(grade);
     }
   },
 

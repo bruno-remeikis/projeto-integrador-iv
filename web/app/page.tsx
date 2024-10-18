@@ -3,14 +3,20 @@
 import { InputFile } from "@/components/InputFile";
 import { FileTable } from "@/components/FileTable";
 import { concatFileList } from "@/utils/FileListUtils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "@/components/PageTitle";
 import { CorrectedTest } from "@/models/CorrectedTest";
+import { Modal } from "@/components/Modal";
+import { ProgressBar } from "@/components/ProgressBar";
 
 export default function HomePage() {
+
   const router = useRouter();
+
   const [files, setFiles] = useState<FileList>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
 
   function handleOnSelectFiles(newFiles: FileList) {
     const updatedFiles = concatFileList(files, newFiles);
@@ -22,6 +28,9 @@ export default function HomePage() {
       alert("Faça upload de ao menos um arquivo");
       return;
     }
+
+    setProgress(0);
+    setLoading(true);
 
     // Monta body da requisição
     const formData = new FormData();
@@ -55,7 +64,26 @@ export default function HomePage() {
       console.error("Erro ao fazer upload:", error);
       alert("Falha ao fazer upload dos arquivos");
     }
+    finally {
+      setLoading(false);
+    }
   }
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (loading) {
+        interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 70) {
+                    clearInterval(interval);
+                    return 70;
+                }
+                return prev + 2;
+            });
+        }, 60);
+    }
+    return () => clearInterval(interval);
+}, [loading]);
 
   return (
     <div>
@@ -80,6 +108,19 @@ export default function HomePage() {
           </button>
         </div>
       </main>
+
+      {loading &&
+        <Modal>
+          <span className="block mb-2 text-xl">{/*
+            progress <= 20 ? 'Enviando provas' :
+            progress <= 40 ? 'Analisando respostas' :
+            'Corrigindo provas'
+          */}
+          Corrigindo provas
+          </span>
+          <ProgressBar progress={progress} />
+        </Modal>
+      }
     </div>
   );
 }

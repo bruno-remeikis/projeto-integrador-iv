@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { CorrectedTest, TestQuestion } from "@/models/CorrectedTest"; 
 import TextareaAutosize from 'react-textarea-autosize';
 import { PageTitle } from "@/components/PageTitle";
-import { joinOrEmpty } from "@/utils/StringUtils";
+import { formatGrade, joinOrEmpty } from "@/utils/StringUtils";
+import { IoIosArrowForward } from "react-icons/io";
 
 export default function DetailsPage() {
   
@@ -45,19 +46,28 @@ export default function DetailsPage() {
 			<PageTitle goBackTo="/provas">Detalhes da Avaliação</PageTitle>
 			<main>
 				<div className="section">
-					<div className="form-group">
-						<label>Aluno{Array.isArray(test?.nome_aluno) ? 's' : ''}</label>
-						<input type="text" readOnly value={ joinOrEmpty(test?.nome_aluno) } />
+					<div className="md:flex gap-3">
+						<div className="form-group flex-1">
+							<label>Aluno{Array.isArray(test?.nome_aluno) ? 's' : ''}</label>
+							<input type="text" readOnly value={ joinOrEmpty(test?.nome_aluno) } />
+						</div>
+
+						<div className="form-group flex-1">
+							<label>Área{Array.isArray(test?.area_conhecimento) ? 's' : ''} de Conhecimento</label>
+							<input type="text" readOnly value={ joinOrEmpty(test?.area_conhecimento) + ', História, Geografia' } />
+						</div>
+
+						<div className="form-group w-20">
+							<label>Pontuação</label>
+							<input type="text" readOnly value={ formatGrade(test?.pontuacao) } />
+						</div>
 					</div>
 
-					<div className="form-group">
-						<label>Área{Array.isArray(test?.area_conhecimento) ? 's' : ''} de Conhecimento</label>
-						<input type="text" readOnly value={ joinOrEmpty(test?.area_conhecimento) } />
+					<div className="grid md:grid-cols-2 gap-3 md:gap-6">
+						{test?.questoes?.map((q, i) =>
+							<Question key={i} question={q} />
+						)}
 					</div>
-
-          {test?.questoes?.map((q, i) =>
-            <Question key={i} question={q} />
-          )}
 				</div>
 			</main>
 		</div>
@@ -79,6 +89,8 @@ function Question({
 	level = 0
 }: QuestionProps) {
 
+	const [collapsed, setCollapsed] = useState<boolean>(true);
+
 	function getScoreColor() {
 		if(pontuacao === 1)
 			return 'bg-green-400';
@@ -88,21 +100,36 @@ function Question({
 	}
 
 	return (
-		<div className={`${getScoreColor()} ${level === 0 ? 'mb-3 md:mb-4 shadow-md' : 'border-white border-2'} p-2 md:p-3 border rounded-sm `}>
-			<div className="form-group !pb-0 md:gap-2">
-				<TextareaAutosize readOnly value={enunciado} />
-				{resposta ?
-					<TextareaAutosize readOnly value={resposta} />
-					: null
-				}
-				{questoes
-					? questoes.map((q, i) => <Question key={i} question={q} level={level + 1} />)
-					: null
-				}
-				<div className="flex justify-end">
-					<div className="flex items-center gap-2">
-						<label className="text-white">{questoes ? 'Total' : 'Pontuação'}:</label>
-						<input type="text" readOnly value={(pontuacao * 100) + '%'} className="w-16" />
+		<div>
+			<div className={`${getScoreColor()} ${level === 0 ? 'shadow-md' : 'mb-2 border-white border-2'} p-2 md:p-3 border rounded-sm`}>
+				<div className="form-group !pb-0 md:gap-2">
+					<TextareaAutosize readOnly value={enunciado} className="bg-white bg-opacity-90" />
+					{resposta &&
+						<TextareaAutosize readOnly value={resposta} className="bg-white bg-opacity-90" />
+					}
+					{questoes &&
+						<div>
+							<button
+								type="button"
+								onClick={() => setCollapsed(prev => !prev)}
+								className="flex items-center gap-1 text-white hover:opacity-75 transition-all"
+								title={collapsed ? 'Expandir' : 'Colapsar'}
+							>
+								<IoIosArrowForward className={`${collapsed ? '' : 'rotate-90'} transition-all`} />
+								<span className="mb-[2px]">{ collapsed ? 'ver questões' : 'esconder questões' }</span>
+							</button>
+							<div className={`${collapsed ? 'hidden' : ''}`}>
+								{questoes.map((q, i) =>
+									<Question key={i} question={q} level={level + 1} />
+								)}
+							</div>
+						</div>
+					}
+					<div className="flex justify-end">
+						<div className="flex items-center gap-2">
+							<label className="text-white">{questoes ? 'Total' : 'Pontuação'}:</label>
+							<input type="text" readOnly value={(pontuacao * 100) + '%'} className="w-16 bg-white bg-opacity-90" />
+						</div>
 					</div>
 				</div>
 			</div>
