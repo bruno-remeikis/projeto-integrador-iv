@@ -10,7 +10,7 @@ export function PageTitle({ children, goBackTo }: GoBackTitleProps) {
     return (
         <div className="flex gap-3 items-center p-3 pb-0">
             {goBackTo ?
-                <Link href={goBackTo} className="default-button default-button-always-enabled">
+                <Link href={goBackTo} className="primary-button primary-button-always-enabled">
                     <FiArrowLeft size={20} />
                 </Link>
             : null}

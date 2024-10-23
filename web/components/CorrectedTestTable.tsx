@@ -34,8 +34,9 @@ import {
 } from "@/components/ui/table"
 import { CorrectedTest } from "@/models/CorrectedTest"
 import { formatGrade, join } from "@/utils/StringUtils"
+import { Config } from "@/models/Config"
 
-export const columns: ColumnDef<CorrectedTest>[] = [
+export const getColumns = (config?: Config): ColumnDef<CorrectedTest>[] => [
   // Coluna: checkbox
   {
     id: "select",
@@ -65,7 +66,12 @@ export const columns: ColumnDef<CorrectedTest>[] = [
     accessorKey: "nome_aluno",
     header: "Aluno",
     cell: ({ row }) => {
+
+      if (!config?.name)
+        return <div className="text-black text-opacity-25 italic">omitido</div>
+
       const value: string = row.getValue('nome_aluno');
+
       return value
         ? <div>{ join(value) }</div>
         : <div className="text-black text-opacity-25 italic">Sem nome</div>
@@ -77,7 +83,6 @@ export const columns: ColumnDef<CorrectedTest>[] = [
     accessorKey: "pontuacao",
     header: "Pontuação",
     cell: ({ row }) => {
-
       const grade: string = row.getValue('pontuacao');
       return formatGrade(grade);
     }
@@ -152,10 +157,11 @@ export const columns: ColumnDef<CorrectedTest>[] = [
 
 type CorrectedTestTableProps = {
   data: CorrectedTest[];
+  config?: Config;
   onSelectRow: (row: CorrectedTest) => void;
 }
 
-export function CorrectedTestTable({ data, onSelectRow }: CorrectedTestTableProps) {
+export function CorrectedTestTable({ data, config, onSelectRow }: CorrectedTestTableProps) {
   const [sorting, setSorting] =
     React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] =
@@ -164,6 +170,8 @@ export function CorrectedTestTable({ data, onSelectRow }: CorrectedTestTableProp
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] =
     React.useState({})
+
+  const columns = getColumns(config);
 
   const table = useReactTable({
     data,
@@ -233,7 +241,7 @@ export function CorrectedTestTable({ data, onSelectRow }: CorrectedTestTableProp
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
+                            header.column.columnDef!.header,
                             header.getContext()
                           )}
                     </TableHead>

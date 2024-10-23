@@ -7,8 +7,8 @@ export type TestQuestion = {
 
 export type CorrectedTest = {
   id: number;
-  area_conhecimento: string | string[];
-  nome_aluno: string | string[] | null;
+  area_conhecimento?: string | string[];
+  nome_aluno?: string | string[] | null;
   questoes: TestQuestion[];
   pontuacao: number;
 };

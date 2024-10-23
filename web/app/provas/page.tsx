@@ -2,12 +2,15 @@
 
 import { CorrectedTestTable } from "@/components/CorrectedTestTable";
 import { PageTitle } from "@/components/PageTitle";
+import { useConfig } from "@/contexts/ConfigContext";
 import { CorrectedTest } from "@/models/CorrectedTest";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function ProvasPage() {
+
   const router = useRouter();
+  const { config } = useConfig();
 
   const [tests, setTests] = useState<CorrectedTest[]>([]);
 
@@ -44,7 +47,11 @@ export default function ProvasPage() {
       <PageTitle goBackTo="/">Avaliações Corrigidas pela IA</PageTitle>
       <main>
         <div className="section">
-          <CorrectedTestTable data={tests} onSelectRow={handleOnSelectRow} />
+          <CorrectedTestTable
+            data={tests}
+            config={config}
+            onSelectRow={handleOnSelectRow}
+          />
         </div>
       </main>
     </div>

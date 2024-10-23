@@ -9,14 +9,19 @@ import { PageTitle } from "@/components/PageTitle";
 import { CorrectedTest } from "@/models/CorrectedTest";
 import { Modal } from "@/components/Modal";
 import { ProgressBar } from "@/components/ProgressBar";
+import { Switch } from "@/components/Switch";
+import { GoGear } from "react-icons/go";
+import { useConfig } from "@/contexts/ConfigContext";
 
 export default function HomePage() {
 
   const router = useRouter();
+  const { config, setConfig } = useConfig();
 
   const [files, setFiles] = useState<FileList>();
   const [loading, setLoading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const [configModalVisivle, setConfigModalVisible] = useState<boolean>(false);
 
   function handleOnSelectFiles(newFiles: FileList) {
     const updatedFiles = FileListUtils.concat(files, newFiles);
@@ -37,10 +42,12 @@ export default function HomePage() {
     setLoading(true);
 
     // Monta body da requisição
-    const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
+    const formData = new FormData()
+    formData.append('name', config.name.toString());
+    formData.append('area', config.area.toString());
+    formData.append('prompt', config.prompt.trim());
+    for (let i = 0; i < files.length; i++)
       formData.append("files", files[i]);
-    }
 
     try {
       const response = await fetch("http://localhost:8000/upload", {
@@ -73,6 +80,14 @@ export default function HomePage() {
     }
   }
 
+  function openConfigModal() {
+    setConfigModalVisible(true);
+  }
+
+  function closeConfigModal() {
+    setConfigModalVisible(false);
+  }
+
   // Faz um carregamento fake ao carregar resposta da API
   useEffect(() => {
     const fakeLimit = 90;
@@ -94,6 +109,7 @@ export default function HomePage() {
   return (
     <div>
       <PageTitle>Upload de provas</PageTitle>
+
       <main>
         <div className="section">
           <InputFile onSelectFiles={handleOnSelectFiles} />
@@ -103,10 +119,13 @@ export default function HomePage() {
           <FileTable data={files ? Array.from(files) : []} onRemoveFile={handleOnRemoveFile} />
         </div>
 
-        <div className="section flex justify-center">
+        <div className="section flex justify-center gap-3">
+          <button className="button flex items-center gap-2" onClick={openConfigModal}>
+            <GoGear size={20} />
+            Configurações
+          </button>
           <button
-            type="button"
-            className="default-button"
+            className="primary-button"
             onClick={handleCorrectTests}
             disabled={!files || files.length === 0}
           >
@@ -115,18 +134,57 @@ export default function HomePage() {
         </div>
       </main>
 
-      {loading &&
-        <Modal>
-          <span className="block mb-2 text-xl">{/*
-            progress <= 20 ? 'Enviando provas' :
-            progress <= 40 ? 'Analisando respostas' :
-            'Corrigindo provas'
-          */}
-            Corrigindo provas
-          </span>
-          <ProgressBar progress={progress} />
-        </Modal>
-      }
+      {/* Carregamento */}
+      <Modal visible={loading}>
+        <span className="block mb-2 text-xl">{/*
+          progress <= 20 ? 'Enviando provas' :
+          progress <= 40 ? 'Analisando respostas' :
+          'Corrigindo provas'
+        */}
+          Corrigindo provas
+        </span>
+        <ProgressBar progress={progress} />
+      </Modal>
+
+      {/* Configurações */}
+      <Modal
+        visible={configModalVisivle}
+        setVisible={setConfigModalVisible}
+        overlayClassName="relative"
+      >
+        <h3 className="text-center">Configurações</h3>
+        <div className="mt-3">
+          <h4 className="mb-1">Campos</h4>
+          <div className="flex flex-col gap-2">
+            <Switch
+              id='switch-nome'
+              label="Nome do(s) aluno(s)"
+              checked={config.name}
+              setChecked={(value) => setConfig(prev => ({...prev, name: value}))}
+            />
+            <Switch
+              id='switch-area-conhecimento'
+              label="Área(s) de conhecimento"
+              checked={config.area}
+              setChecked={value => setConfig(prev => ({...prev, area: value}))}
+            />
+          </div>
+        </div>
+        <div className="mt-3">
+          <label htmlFor="area-prompt">Prompt</label>
+          <textarea
+            id='area-prompt'
+            rows={4}
+            cols={40}
+            value={config.prompt}
+            onChange={e => setConfig(prev => ({ ...prev, prompt: e.target.value }))}
+          />
+        </div>
+
+        <div className="flex justify-end gap-2 mt-3">
+          <button className="button flat-button" onClick={closeConfigModal}>Concluir</button>
+        </div>
+      </Modal>
     </div>
   );
 }

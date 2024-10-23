@@ -79,12 +79,13 @@ body {
 }
 
 /* Mine */
-h1 {
-  font-size: 2rem;
-}
-h2 {
-  font-size: 1.4rem;
-}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.17rem; }
+h4 { font-size: 1rem; }
+h5 { font-size: 0.83rem; }
+h6 { font-size: 0.67rem; }
+
 input,
 textarea {
   @apply block border px-2 py-1 rounded-sm w-full resize-none;
@@ -100,10 +101,16 @@ main {
 .section {
   @apply mt-3;
 }
-.default-button {
-  @apply bg-primary text-white p-3 rounded-md enabled:cursor-pointer enabled:hover:opacity-90 disabled:opacity-75 disabled:cursor-not-allowed transition-all
+.button {
+  @apply p-3 border rounded-md enabled:cursor-pointer enabled:hover:opacity-90 disabled:opacity-75 disabled:cursor-not-allowed transition-all;
 }
-.default-button-always-enabled {
+.primary-button {
+  @apply button bg-primary text-white !border-none;
+}
+.flat-button {
+  @apply !py-2;
+}
+.primary-button-always-enabled {
   @apply cursor-pointer hover:opacity-90
 }
 .form-group {

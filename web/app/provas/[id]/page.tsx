@@ -7,10 +7,12 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { PageTitle } from "@/components/PageTitle";
 import { formatGrade, joinOrEmpty } from "@/utils/StringUtils";
 import { IoIosArrowForward } from "react-icons/io";
+import { useConfig } from "@/contexts/ConfigContext";
 
 export default function DetailsPage() {
   
   const router = useRouter();
+  const { config } = useConfig();
   const { id } = useParams(); // Obtém o id da URL
   
   const [test, setTest] = useState<CorrectedTest>();
@@ -47,20 +49,24 @@ export default function DetailsPage() {
 			<main>
 				<div className="section">
 					<div className="md:flex gap-3">
+
+						{config?.name &&
 						<div className="form-group flex-1">
 							<label>Aluno{Array.isArray(test?.nome_aluno) ? 's' : ''}</label>
 							<input type="text" readOnly value={ joinOrEmpty(test?.nome_aluno) } />
-						</div>
+						</div>}
 
+						{config?.area && 
 						<div className="form-group flex-1">
 							<label>Área{Array.isArray(test?.area_conhecimento) ? 's' : ''} de Conhecimento</label>
 							<input type="text" readOnly value={ joinOrEmpty(test?.area_conhecimento) + ', História, Geografia' } />
-						</div>
+						</div>}
 
 						<div className="form-group w-20">
 							<label>Pontuação</label>
 							<input type="text" readOnly value={ formatGrade(test?.pontuacao) } />
 						</div>
+
 					</div>
 
 					<div className="grid md:grid-cols-2 gap-3 md:gap-6">

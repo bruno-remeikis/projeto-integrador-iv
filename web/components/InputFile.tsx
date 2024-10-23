@@ -20,7 +20,7 @@ export function InputFile({ onSelectFiles }: InputFileProps) {
     <div className="flex">
       <Label
         htmlFor="file-input"
-        className="default-button default-button-always-enabled flex gap-2 items-center !pr-4"
+        className="primary-button primary-button-always-enabled flex gap-2 items-center !pr-4"
       >
         <FiFilePlus size={30} />
         <span>Adicionar arquivo</span>
