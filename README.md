@@ -32,6 +32,7 @@ docker compose up
 
 ```
 
+
 ### Rodar o front-end
 Para rodarmos o front-end, dentro da pasta web, execute: 
 ```sh
