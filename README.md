@@ -28,4 +28,13 @@ docker compose build
 Já tendo a imagem construída, para rodarmos a aplicação, execute: 
 ```sh
 docker compose up
+
+
 ```
+
+### Rodar o front-end
+Para rodarmos o front-end, dentro da pasta web, execute: 
+```sh
+npm install
+
+npm run dev
