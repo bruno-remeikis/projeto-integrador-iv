@@ -25,11 +25,13 @@ Trata-se de uma aplicação web que te permite enviar avaliações educacionais 
 
 ## Get Started
 
-### Iniciar API
+### 1. Iniciar API
+
+Acesse o diretório [/api](api)
 
 #### ⚙️ Configurações iniciais
 
-Crie o arquivo chamado `.env` na raiz deste projeto.\
+Crie um arquivo chamado `.env` na raiz deste projeto.\
 Neste arquivo, cole as variáveis abaixo e preencha-as ou altere-as de
 acordo com sua necessidade.
 ```properties
@@ -54,9 +56,11 @@ Já tendo a imagem construída, para rodarmos a aplicação, execute:
 docker compose up
 ```
 
+---
 
+### 2. Iniciar Front-end
 
-### Iniciar Front-end
+Acesse o diretório [/web](web)
 
 #### ⚒️ Instalar dependências
 Uma única vez, instale as dependências do projeto, executando:
