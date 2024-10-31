@@ -64,7 +64,7 @@ export default function DetailsPage() {
 
 						<div className="form-group w-20">
 							<label>Pontuação</label>
-							<input type="text" readOnly value={ formatGrade(test?.pontuacao) } />
+							<input type="text" readOnly value={ test !== undefined ? formatGrade(test?.pontuacao) : 'Erro' } />
 						</div>
 
 					</div>
@@ -134,7 +134,7 @@ function Question({
 					<div className="flex justify-end">
 						<div className="flex items-center gap-2">
 							<label className="text-white">{questoes ? 'Total' : 'Pontuação'}:</label>
-							<input type="text" readOnly value={(pontuacao * 100) + '%'} className="w-16 bg-white bg-opacity-90" />
+							<input type="text" readOnly value={formatGrade(pontuacao)} className="w-16 bg-white bg-opacity-90" />
 						</div>
 					</div>
 				</div>

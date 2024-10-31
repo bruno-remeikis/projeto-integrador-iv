@@ -10,13 +10,13 @@ export function joinOrEmpty(value: string | string[] | null | undefined) {
     return join(value);
 }
 
-export function formatGrade(grade?: number | string) {
+export function formatGrade(grade: number | string): string {
     try {
-        let value: number | string = Math.round(Number(grade) * 100);
+        grade = Number(grade);
 
-        if (!Number.isInteger(value)) {
-            value = value.toFixed(2);
-        }
+        let value: string = !Number.isInteger(grade)
+            ? grade.toFixed(2)
+            : grade.toString();
 
         return value + '%';
     }
