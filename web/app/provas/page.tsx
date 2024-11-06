@@ -34,7 +34,7 @@ export default function ProvasPage() {
 
   function handleOnSelectRow(row: CorrectedTest) {
     if (!row.id) {
-      const msg = "ID do teste não encontrado.";
+      const msg = "ID da avaliaçao não encontrado.";
       alert(msg);
       console.error(msg);
       return; 

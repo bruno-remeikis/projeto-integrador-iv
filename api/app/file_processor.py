@@ -5,7 +5,7 @@ import pytesseract
 from PIL import Image
 import os
 
-from exceptions.InvalidFileExtensionError import InvalidFileExtensionError
+from exceptions import InvalidFileExtensionError
 
 
 TEMP_DIR = 'tempfiles'

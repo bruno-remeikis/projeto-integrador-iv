@@ -6,7 +6,7 @@ import os
 
 import file_processor as fp
 import ai_service as ai
-from exceptions.InvalidFileExtensionError import InvalidFileExtensionError
+from exceptions import InvalidFileExtensionError
 
 # Inicia API
 app = FastAPI()
@@ -82,3 +82,13 @@ async def upload_file(files: List[UploadFile] = File(...)):
             if file.file is not None:
                 file.file.close()
     return results
+
+
+
+@app.get('/templates')
+async def get_templates():
+    templates = [
+        'objective',
+        'essay'
+    ]
+    return templates

@@ -9,14 +9,14 @@ import { PageTitle } from "@/components/PageTitle";
 import { CorrectedTest } from "@/models/CorrectedTest";
 import { Modal } from "@/components/Modal";
 import { ProgressBar } from "@/components/ProgressBar";
-import { Switch } from "@/components/Switch";
 import { GoGear } from "react-icons/go";
 import { useConfig } from "@/contexts/ConfigContext";
+import { ConfigModal } from "@/components/ConfigModal";
 
 export default function HomePage() {
 
   const router = useRouter();
-  const { config, setConfig } = useConfig();
+  const { config } = useConfig();
 
   const [files, setFiles] = useState<FileList>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -108,7 +108,7 @@ export default function HomePage() {
 
   return (
     <div>
-      <PageTitle>Upload de provas</PageTitle>
+      <PageTitle>Upload de Avaliações</PageTitle>
 
       <main>
         <div className="section">
@@ -129,7 +129,7 @@ export default function HomePage() {
             onClick={handleCorrectTests}
             disabled={!files || files.length === 0}
           >
-            Corrigir provas com IA
+            Corrigir avaliações com IA
           </button>
         </div>
       </main>
@@ -137,54 +137,17 @@ export default function HomePage() {
       {/* Carregamento */}
       <Modal visible={loading}>
         <span className="block mb-2 text-xl">{/*
-          progress <= 20 ? 'Enviando provas' :
+          progress <= 20 ? 'Enviando avaliações' :
           progress <= 40 ? 'Analisando respostas' :
-          'Corrigindo provas'
+          'Corrigindo avaliações'
         */}
-          Corrigindo provas
+          Corrigindo avaliações
         </span>
         <ProgressBar progress={progress} />
       </Modal>
 
       {/* Configurações */}
-      <Modal
-        visible={configModalVisivle}
-        setVisible={setConfigModalVisible}
-        overlayClassName="relative"
-      >
-        <h3 className="text-center">Configurações</h3>
-        <div className="mt-3">
-          <h4 className="mb-1">Campos</h4>
-          <div className="flex flex-col gap-2">
-            <Switch
-              id='switch-nome'
-              label="Nome do(s) aluno(s)"
-              checked={config.name}
-              setChecked={(value) => setConfig(prev => ({...prev, name: value}))}
-            />
-            <Switch
-              id='switch-area-conhecimento'
-              label="Área(s) de conhecimento"
-              checked={config.area}
-              setChecked={value => setConfig(prev => ({...prev, area: value}))}
-            />
-          </div>
-        </div>
-        <div className="mt-3">
-          <label htmlFor="area-prompt">Prompt</label>
-          <textarea
-            id='area-prompt'
-            rows={4}
-            cols={40}
-            value={config.prompt}
-            onChange={e => setConfig(prev => ({ ...prev, prompt: e.target.value }))}
-          />
-        </div>
-
-        <div className="flex justify-end gap-2 mt-3">
-          <button className="button flat-button" onClick={closeConfigModal}>Concluir</button>
-        </div>
-      </Modal>
+      <ConfigModal visible={configModalVisivle} setVisible={setConfigModalVisible} />
     </div>
   );
 }
