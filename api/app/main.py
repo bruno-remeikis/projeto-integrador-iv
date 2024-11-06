@@ -3,10 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 import json
 import os
+import traceback
 
 import file_processor as fp
 import ai_service as ai
-from exceptions import InvalidFileExtensionError
+from models.UploadConfig import UploadConfig
+from exceptions import InvalidFileExtensionError, InvalidTestTypeError
 
 # Inicia API
 app = FastAPI()
@@ -33,15 +35,13 @@ async def index():
 @app.post('/upload')
 async def upload_file(
     files: List[UploadFile] = File(...),
+    testType: str = Form(default='Discursive'),
     name: bool = Form(default=True),
     area: bool = Form(default=True),
-    prompt: str = Form(default='')
+    prompt: str = Form(default=''),
+    theme: str = Form(default=''),
 ):
-    config = ai.UploadConfig(name=name, area=area, prompt=prompt.strip())
-    print('config 1:')
-    print(config)
-    print('chegou:')
-    print(name)
+    config = UploadConfig(name=name, area=area, prompt=prompt.strip(), testType=testType, theme=theme)
     results = []
     for file in files:
         try:
@@ -57,6 +57,16 @@ async def upload_file(
                 "error": e.message,
                 "file": e.filename
             })
+        except InvalidTestTypeError as e:
+            traceback.print_exc()
+            print("Try to:\n" +
+                 "\t1.  Import the PromptBuilder child class at ai_service.py\n" +
+                f"\t\tExample: `from prompt_builders import {testType}PromptBuilder`\n" +
+                f"\t2.  Create the {testType}PromptBuilder class")
+            return str(e)
+        except Exception as e:
+            traceback.print_exc()
+            return str(e)
         finally:
             if file.file is not None:
                 file.file.close()
@@ -78,13 +88,16 @@ async def upload_file(files: List[UploadFile] = File(...)):
                 "error": e.message,
                 "file": e.filename
             })
+        except Exception as e:
+            traceback.print_exc()
+            return str(e)
         finally:
             if file.file is not None:
                 file.file.close()
     return results
 
 
-
+"""
 @app.get('/templates')
 async def get_templates():
     templates = [
@@ -92,3 +105,4 @@ async def get_templates():
         'essay'
     ]
     return templates
+"""

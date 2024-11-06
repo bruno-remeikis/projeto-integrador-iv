@@ -6,3 +6,7 @@ class UploadConfig(BaseModel):
     name: bool = True
     area: bool = True
     prompt: str = ''
+    theme: str = ''
+    
+#class EssayConfig(UploadConfig):
+#    theme: str = ''

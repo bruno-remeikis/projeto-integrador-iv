@@ -5,7 +5,7 @@ from models.UploadConfig import UploadConfig
 
 class DiscursivePromptBuilder(PromptBuilder):
     def __init__(self):
-        super('Prova Objetiva')
+        super().__init__('Prova Dissertativa')
         
     def _buildPrompt(self, sb: StringBuilder, config: UploadConfig):
         sb.ln('- Identifique o nome de quem realizou a avaliação e guarde isto no campo "nome_aluno". Caso identifique mais de uma pessoa, seus nomes devem ficar em um array. Caso não identifique nome algum, guarde `null`;',
