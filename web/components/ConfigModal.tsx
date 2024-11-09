@@ -2,41 +2,7 @@ import { useConfig } from "@/contexts/ConfigContext";
 import { Modal, VisibilityModalProps } from "./Modal"
 import { Switch } from "./Switch";
 import { Tooltip } from "./Tooltip";
-
-import { IconType } from "react-icons/lib";
-import { TbTextSpellcheck } from 'react-icons/tb';
-import { CiSquareCheck } from "react-icons/ci";
-import { SiWritedotas } from "react-icons/si";
-import { GoTypography } from "react-icons/go";
-
-const templates: Template[] = [
-  {
-    name: 'Prova',
-    description: 'Questões discursivas e objetivas',
-    selected: true,
-    Icon: TbTextSpellcheck,
-  }, {
-    name: 'Discursiva',
-    description: '',
-    selected: false,
-    Icon: GoTypography
-  }, {
-    name: 'Objetiva',
-    description: '',
-    selected: false,
-    Icon: CiSquareCheck
-  }, {
-    name: 'Redação',
-    description: '',
-    selected: false,
-    Icon: SiWritedotas
-  }, /*{
-    name: 'Trabalho',
-    description: '',
-    selected: false,
-    Icon: SiWritedotas
-  },*/
-]
+import { testTypes } from "@/models/TestType";
 
 export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
 
@@ -58,7 +24,7 @@ export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
       <div className="mt-3">
         <h4 className="mb-1">Tipo de Avaliação</h4>
         <div className="grid grid-cols-3 gap-2">
-          {templates.map((template, i) => <TemplateCard key={i} template={template} />)}
+          {Object.keys(testTypes).map((testTypeKey, i) => <TestTypeCard key={i} testTypeKey={testTypeKey} />)}
         </div>
       </div>
       <div className="mt-3">
@@ -96,22 +62,21 @@ export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
   );
 }
 
-type Template = {
-  name: string;
-  description: string;
-  selected: boolean;
-  Icon: IconType;
-}
 
-function TemplateCard({ template: { name, description, selected, Icon } }: { template: Template }) {
 
-  const { setConfig } = useConfig();
+function TestTypeCard({ testTypeKey }: { testTypeKey: string }) {
+
+  const { name, description, Icon } = testTypes[testTypeKey];
+
+  const { config, selectTestType } = useConfig();
+
+  const selected = config.testTypeKey === testTypeKey;
 
   return (
     <Tooltip content={description}>
       <div
         className={`flex flex-col items-center p-2 border rounded cursor-pointer ${selected ? 'bg-blue-50 border-blue-500' : 'hover:bg-blue-50 hover:border-blue-500'} transition-all`}
-        //onClick={() => setConfig(prev => ({ ...prev, template }))}
+        onClick={() => selectTestType(testTypeKey)}
       >
         <Icon />
         <span>{ name }</span>

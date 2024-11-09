@@ -6,19 +6,25 @@ import React, { createContext, Dispatch, ReactNode, SetStateAction, useContext, 
 type ConfigContextProps = {
     config: Config;
     setConfig: Dispatch<SetStateAction<Config>>;
+    selectTestType: (_: string) => void;
 }
 
 const ConfigContext = createContext<ConfigContextProps | null>(null);
 
 export function ConfigProvider({ children }: { children: ReactNode }) {
     const [config, setConfig] = useState<Config>({
+        testTypeKey: 'Discursive',
         name: true,
         area: true,
         prompt: ''
     });
 
+    function selectTestType(testTypeKey: string): void {
+        setConfig(prev => ({ ...prev, testTypeKey: testTypeKey }));
+    }
+
     return (
-        <ConfigContext.Provider value={{ config, setConfig }}>
+        <ConfigContext.Provider value={{ config, setConfig, selectTestType }}>
             { children }
         </ConfigContext.Provider>
     );

@@ -9,6 +9,7 @@ import file_processor as fp
 import ai_service as ai
 from models.UploadConfig import UploadConfig
 from exceptions import InvalidFileExtensionError, InvalidTestTypeError
+from prompt_builders.PromptBuilder import PromptBuilder
 
 # Inicia API
 app = FastAPI()
@@ -26,16 +27,24 @@ app.add_middleware(
 os.makedirs(fp.TEMP_DIR, exist_ok=True)
 
 
+def buildErrorResponse(e: Exception):
+    traceback.print_exc()
+    return {
+        'status': 'error',
+        'error': str(e)
+    }
+
+
 @app.get('/')
 async def index():
-    return { "message": "Hello, World!!!!!" }
+    return { "message": "API is running..." }
 
 
 # Body type: Multipart / Form Data
 @app.post('/upload')
 async def upload_file(
     files: List[UploadFile] = File(...),
-    testType: str = Form(default='Discursive'),
+    testType: str = Form(default=''),
     name: bool = Form(default=True),
     area: bool = Form(default=True),
     prompt: str = Form(default=''),
@@ -52,25 +61,22 @@ async def upload_file(
             # Converte a resposta da IA de string para JSON
             json_test_result = json.loads(test_result)
             results.append(json_test_result)
-        except InvalidFileExtensionError as e:
-            results.append({
-                "error": e.message,
-                "file": e.filename
-            })
         except InvalidTestTypeError as e:
-            traceback.print_exc()
             print("Try to:\n" +
                  "\t1.  Import the PromptBuilder child class at ai_service.py\n" +
                 f"\t\tExample: `from prompt_builders import {testType}PromptBuilder`\n" +
                 f"\t2.  Create the {testType}PromptBuilder class")
-            return str(e)
+            return buildErrorResponse(e)
         except Exception as e:
-            traceback.print_exc()
-            return str(e)
+            return buildErrorResponse(e)
         finally:
             if file.file is not None:
                 file.file.close()
-    return results
+    print(results)
+    return {
+        'status': 'ok',
+        'results': results,
+    }
 
 
 # Apenas extrai os textos dos arquivos e os retorna

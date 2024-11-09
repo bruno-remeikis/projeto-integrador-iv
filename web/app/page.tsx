@@ -46,6 +46,7 @@ export default function HomePage() {
     formData.append('name', config.name.toString());
     formData.append('area', config.area.toString());
     formData.append('prompt', config.prompt.trim());
+    formData.append('testType', config.testTypeKey);
     for (let i = 0; i < files.length; i++)
       formData.append("files", files[i]);
 
@@ -61,8 +62,15 @@ export default function HomePage() {
       }
 
       const result = await response.json()
+
+      if (result.status === 'error') {
+        console.error("Erro ao fazer upload:", result.error);
+        alert(result.error);
+        return;
+      }
+
       // Adiciona ID aos resultados
-      const tests = result.map((t: CorrectedTest, i: number) => ({
+      const tests: CorrectedTest[] = result.results.map((t: CorrectedTest, i: number) => ({
         ...t,
         id: i + 1
       }));
@@ -82,10 +90,6 @@ export default function HomePage() {
 
   function openConfigModal() {
     setConfigModalVisible(true);
-  }
-
-  function closeConfigModal() {
-    setConfigModalVisible(false);
   }
 
   // Faz um carregamento fake ao carregar resposta da API

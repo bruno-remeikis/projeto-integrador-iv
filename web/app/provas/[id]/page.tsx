@@ -7,12 +7,16 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { PageTitle } from "@/components/PageTitle";
 import { formatGrade, joinOrEmpty } from "@/utils/StringUtils";
 import { IoIosArrowForward } from "react-icons/io";
-import { useConfig } from "@/contexts/ConfigContext";
+
+/*const palavras = [
+	'Norberto Bobbio',
+	'apresenta suas origens no passado',
+	'Por conta dessa situação de registro irregular, os dois meninos sequer apresentam nomes, o que é impensável na sociedade contemporânea, uma vez que o nome de um indivíduo faz parte da construção integral da sua identidade.'
+]*/
 
 export default function DetailsPage() {
   
   const router = useRouter();
-  const { config } = useConfig();
   const { id } = useParams(); // Obtém o id da URL
   
   const [test, setTest] = useState<CorrectedTest>();
@@ -41,7 +45,80 @@ export default function DetailsPage() {
 
     setTest(test);
 
-  }, [id]);
+  }, [router, id]);
+
+  function renderEssay() {
+    //! FUNCIONA, MAS NÃO QUEBRA LINHAS
+    /*
+    const regex = new RegExp(`(${palavras.join('|')})`, 'g');
+      const parts = text.split(regex); // Divide o texto em partes, mantendo as palavras a serem destacadas
+
+      return parts.map((part, index) => 
+      palavras.includes(part) ? (
+          <span key={index} style={{ color: 'red', fontWeight: 'bold' }}>
+            {part}
+          </span>
+        ) : (
+          part
+        )
+      );
+    */
+
+    const text = test?.essay;
+
+    if (!text) {
+      return '';
+    }
+
+    if (!test?.correction) {
+      return text;
+    }
+
+    console.log(test);
+
+    //! QUEBRA LINHAS, MAS UTILIZA dangerouslySetInnerHTML
+    /*
+    const palavras: string[] = test.correction.flatMap(c => c.excerpt);
+    // Escape regex special characters in keywords
+    const escapedKeywords = palavras.map(keyword => keyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
+    // Create a regex pattern with all keywords
+    const regex = new RegExp(`(${escapedKeywords.join('|')})`, 'gi');
+    // Replace matched keywords with wrapped spans
+    const highlightedText = text.replace(regex, (match) => {
+      return `<span class="text-red-500">${match}</span>`;
+    });
+    // Preserve line breaks
+    return highlightedText.replace(/\n/g, '<br/>');
+    */
+
+    //! NÃO FUNFA
+    /*
+    // Escape regex special characters in excerpts
+    const escapedExcerpts = test.correction.map(({ excerpt }) => excerpt.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
+    // Create a regex pattern with all excerpts
+    const regex = new RegExp(`(${escapedExcerpts.join('|')})`, 'gi');
+    // Split the input text based on the regex pattern
+    const parts = text.split(regex);
+    return parts.map((part, index) => escapedExcerpts.includes(part.toLowerCase())
+      ? <span key={index} className="text-red-500">{part}</span>
+      : <span key={index}>{part}</span> );
+    */
+
+    //! MEU TESTE
+    /*
+    test.correction.map(correction => {
+      correction.excerpt
+    });
+
+    const paragraphs = text.split(/(\n)/);
+    paragraphs.map((p, i) => {
+      if (p === 'n') {
+        return <br key={i} />
+      }
+
+    })
+    */
+  }
 
   return (
 		<div>
@@ -50,16 +127,22 @@ export default function DetailsPage() {
 				<div className="section">
 					<div className="md:flex gap-3">
 
-						{config?.name &&
+						{test?.nome_aluno !== undefined &&
 						<div className="form-group flex-1">
-							<label>Aluno{Array.isArray(test?.nome_aluno) ? 's' : ''}</label>
+							<label>Aluno{Array.isArray(test.nome_aluno) ? 's' : ''}</label>
 							<input type="text" readOnly value={ joinOrEmpty(test?.nome_aluno) } />
 						</div>}
 
-						{config?.area && 
+						{test?.area_conhecimento !== undefined && 
 						<div className="form-group flex-1">
-							<label>Área{Array.isArray(test?.area_conhecimento) ? 's' : ''} de Conhecimento</label>
+							<label>Área{Array.isArray(test.area_conhecimento) ? 's' : ''} de Conhecimento</label>
 							<input type="text" readOnly value={ joinOrEmpty(test?.area_conhecimento) + ', História, Geografia' } />
+						</div>}
+
+						{test?.theme !== undefined && 
+						<div className="form-group flex-1">
+							<label>Tema</label>
+							<input type="text" readOnly value={test.theme} />
 						</div>}
 
 						<div className="form-group w-20">
@@ -69,11 +152,31 @@ export default function DetailsPage() {
 
 					</div>
 
+					{test?.questoes !== undefined &&
 					<div className="grid md:grid-cols-2 gap-3 md:gap-6">
-						{test?.questoes?.map((q, i) =>
+						{test.questoes.map((q, i) =>
 							<Question key={i} question={q} />
 						)}
-					</div>
+					</div>}
+
+					{test?.essay !== undefined &&
+					/*<div
+						contentEditable
+						className="border p-2 rounded"
+					>
+						{ testeee(test.essay) }
+					</div>*/
+					<div
+						contentEditable
+						className="border p-2 rounded"
+						dangerouslySetInnerHTML={{ __html: renderEssay() }}
+					/>
+					/*<div
+						contentEditable
+						className="border p-2 rounded"
+					>
+						{ renderEssay() }	
+					</div>*/}
 				</div>
 			</main>
 		</div>
@@ -90,7 +193,7 @@ function Question({
 		enunciado,
 		resposta,
 		questoes,
-		pontuacao
+		pontuacao,
 	},
 	level = 0
 }: QuestionProps) {
@@ -98,7 +201,7 @@ function Question({
 	const [collapsed, setCollapsed] = useState<boolean>(true);
 
 	function getScoreColor() {
-		if(pontuacao === 1)
+		if(pontuacao === 100)
 			return 'bg-green-400';
 		if(pontuacao === 0)
 			return 'bg-red-400';
