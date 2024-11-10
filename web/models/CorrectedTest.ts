@@ -5,8 +5,13 @@ export type TestQuestion = {
   pontuacao: number;
 };
 
+export type Excerpt = {
+  start: number;
+  end: number;
+}
+
 export type EssayCorrection = {
-  excerpt: string;
+  excerpt: Excerpt;
   type: 'grammatical' | 'reference' | 'other';
   reason: string;
   decrement: number;

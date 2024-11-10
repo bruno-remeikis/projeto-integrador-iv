@@ -19,7 +19,7 @@ class EssayPromptBuilder(PromptBuilder):
             not config.theme)
         sb.ln('- Deve ter o campo "essay" armazenando redação redigida pelo autor;')
         sb.ln('- Deve ter o campo "correction" armazenando uma lista de objetos. Cada item da lista corresponderá a uma justificativa. Cada justificativa informará o motivo pelo qual você decrementará o valor da pontuação;')
-        sb.ln('- Cada justificativa deve ter o campo "excerpt" armazenando o trecho exato da redação que está incorredo;')
+        sb.ln('- Cada justificativa deve ter o campo "excerpt". Ele deve receber um json com os campos "start" e "end". Eles devem armazenar os índices inicial e final, respectivamente, do trecho exato da redação que está incorredo retirado de "essay";')
         sb.ln('- Cada justificativa deve ter o campo "type" armazenando o tipo de erro. Os possíveis valores são: "grammatical" (erros gramaticais), "reference" (referência da informação / informação incorreta), "other" (outro motivo);')
         sb.ln('- Cada justificativa deve ter o campo "reason" contendo uma descrição do por que você considerou o trecho como um erro;')
         sb.ln('- Cada justificativa deve ter o campo "decrement" contendo o valor que foi decrementado da pontuação principal por este erro;')

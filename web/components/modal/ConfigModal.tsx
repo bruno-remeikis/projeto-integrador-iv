@@ -1,7 +1,7 @@
 import { useConfig } from "@/contexts/ConfigContext";
-import { Modal, VisibilityModalProps } from "./Modal"
-import { Switch } from "./Switch";
-import { Tooltip } from "./Tooltip";
+import { Modal, VisibilityModalProps } from "../Modal"
+import { Switch } from "../simple/Switch";
+import { Tooltip } from "../simple/Tooltip";
 import { testTypes } from "@/models/TestType";
 
 export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button"
 import {
   Tooltip as UiTooltip,
   TooltipContent,
@@ -9,7 +8,7 @@ import React from "react"
 
 type TooltipProps = {
     children: React.ReactNode,
-    content: string;
+    content: string | React.ReactNode;
 }
 
 export function Tooltip({ children, content }: TooltipProps) {
@@ -23,7 +22,9 @@ export function Tooltip({ children, content }: TooltipProps) {
 
                 {content &&
                 <TooltipContent>
-                    <p>{ content }</p>
+                    {typeof content === 'string'
+                        ? <p>{ content }</p>
+                        : content }
                 </TooltipContent>}
                 
             </UiTooltip>

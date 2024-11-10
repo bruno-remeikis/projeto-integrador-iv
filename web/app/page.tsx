@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageTitle } from "@/components/PageTitle";
 import { CorrectedTest } from "@/models/CorrectedTest";
-import { Modal } from "@/components/Modal";
-import { ProgressBar } from "@/components/ProgressBar";
+import { Modal } from "@/components/modal/Modal";
+import { ProgressBar } from "@/components/simple/ProgressBar";
 import { GoGear } from "react-icons/go";
 import { useConfig } from "@/contexts/ConfigContext";
-import { ConfigModal } from "@/components/ConfigModal";
+import { ConfigModal } from "@/components/modal/ConfigModal";
 
 export default function HomePage() {
 

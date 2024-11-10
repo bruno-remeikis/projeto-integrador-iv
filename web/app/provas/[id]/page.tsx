@@ -3,16 +3,13 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CorrectedTest, TestQuestion } from "@/models/CorrectedTest"; 
-import TextareaAutosize from 'react-textarea-autosize';
 import { PageTitle } from "@/components/PageTitle";
 import { formatGrade, joinOrEmpty } from "@/utils/StringUtils";
-import { IoIosArrowForward } from "react-icons/io";
-
-/*const palavras = [
-	'Norberto Bobbio',
-	'apresenta suas origens no passado',
-	'Por conta dessa situação de registro irregular, os dois meninos sequer apresentam nomes, o que é impensável na sociedade contemporânea, uma vez que o nome de um indivíduo faz parte da construção integral da sua identidade.'
-]*/
+import { Tooltip } from "@/components/simple/Tooltip";
+import { essayMock } from "@/mocks/CorrectedTestMocks";
+import { Question } from "@/components/Question";
+import { CorrectionTooltipDescription } from "@/components/CorrectionTooltipDescription";
+import { correctionTypes } from "@/utils/CorrectionTypeUtils";
 
 export default function DetailsPage() {
   
@@ -27,6 +24,12 @@ export default function DetailsPage() {
       console.warn('ID da avaliação não informado');
       return;
     }
+
+  // Para testes
+	if (id === 'teste') {
+		setTest(essayMock);
+		return;
+	}
 
     const storedTests = sessionStorage.getItem('tests');
     if (!storedTests) {
@@ -48,22 +51,6 @@ export default function DetailsPage() {
   }, [router, id]);
 
   function renderEssay() {
-    //! FUNCIONA, MAS NÃO QUEBRA LINHAS
-    /*
-    const regex = new RegExp(`(${palavras.join('|')})`, 'g');
-      const parts = text.split(regex); // Divide o texto em partes, mantendo as palavras a serem destacadas
-
-      return parts.map((part, index) => 
-      palavras.includes(part) ? (
-          <span key={index} style={{ color: 'red', fontWeight: 'bold' }}>
-            {part}
-          </span>
-        ) : (
-          part
-        )
-      );
-    */
-
     const text = test?.essay;
 
     if (!text) {
@@ -74,50 +61,47 @@ export default function DetailsPage() {
       return text;
     }
 
-    console.log(test);
+    const excerptStarts = test.correction?.flatMap(c => c.excerpt.start);
+    const excerptEnds = test.correction?.flatMap(c => c.excerpt.end);
 
-    //! QUEBRA LINHAS, MAS UTILIZA dangerouslySetInnerHTML
-    /*
-    const palavras: string[] = test.correction.flatMap(c => c.excerpt);
-    // Escape regex special characters in keywords
-    const escapedKeywords = palavras.map(keyword => keyword.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
-    // Create a regex pattern with all keywords
-    const regex = new RegExp(`(${escapedKeywords.join('|')})`, 'gi');
-    // Replace matched keywords with wrapped spans
-    const highlightedText = text.replace(regex, (match) => {
-      return `<span class="text-red-500">${match}</span>`;
-    });
-    // Preserve line breaks
-    return highlightedText.replace(/\n/g, '<br/>');
-    */
+    const elements: React.ReactNode[] = [];
+    let auxText = '';
 
-    //! NÃO FUNFA
-    /*
-    // Escape regex special characters in excerpts
-    const escapedExcerpts = test.correction.map(({ excerpt }) => excerpt.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'));
-    // Create a regex pattern with all excerpts
-    const regex = new RegExp(`(${escapedExcerpts.join('|')})`, 'gi');
-    // Split the input text based on the regex pattern
-    const parts = text.split(regex);
-    return parts.map((part, index) => escapedExcerpts.includes(part.toLowerCase())
-      ? <span key={index} className="text-red-500">{part}</span>
-      : <span key={index}>{part}</span> );
-    */
+    function pushSimple() {
+      elements.push(<span key={elements.length}>{ auxText }</span>);
+      auxText = '';
+    }
 
-    //! MEU TESTE
-    /*
-    test.correction.map(correction => {
-      correction.excerpt
-    });
+    text.split('').forEach((char, i) => {
 
-    const paragraphs = text.split(/(\n)/);
-    paragraphs.map((p, i) => {
-      if (p === 'n') {
-        return <br key={i} />
+      if (char === '\n') {
+        pushSimple();
+        elements.push(<br key={elements.length + '-br'} />);
+      }
+      else if (excerptStarts.includes(i) && i !== 0) {
+        pushSimple();
+      }
+      else if (excerptEnds.includes(i)) {
+        const correction = test?.correction?.filter(c => c.excerpt.end === i)[0]; //! REAVALIAR [0]
+        if (!correction) {
+          pushSimple();
+        }
+        else {
+          elements.push(
+            <Tooltip key={elements.length} content={<CorrectionTooltipDescription correction={correction} />}>
+              <span className={`${correctionTypes[correction.type].highlightStyle} cursor-help`}>{ auxText }</span>
+            </Tooltip>
+          );
+          auxText = '';
+        }
+      }
+      else if (i === text.length - 1) {
+        pushSimple();
       }
 
-    })
-    */
+      auxText += char;
+    });
+	  return elements;
   }
 
   return (
@@ -160,88 +144,14 @@ export default function DetailsPage() {
 					</div>}
 
 					{test?.essay !== undefined &&
-					/*<div
-						contentEditable
-						className="border p-2 rounded"
-					>
-						{ testeee(test.essay) }
-					</div>*/
 					<div
 						contentEditable
-						className="border p-2 rounded"
-						dangerouslySetInnerHTML={{ __html: renderEssay() }}
-					/>
-					/*<div
-						contentEditable
-						className="border p-2 rounded"
+						className="border p-2 rounded text-justify"
 					>
 						{ renderEssay() }	
-					</div>*/}
+					</div>}
 				</div>
 			</main>
-		</div>
-	);
-}
-
-type QuestionProps = {
-	question: TestQuestion,
-	level?: number;
-}
-
-function Question({
-	question: {
-		enunciado,
-		resposta,
-		questoes,
-		pontuacao,
-	},
-	level = 0
-}: QuestionProps) {
-
-	const [collapsed, setCollapsed] = useState<boolean>(true);
-
-	function getScoreColor() {
-		if(pontuacao === 100)
-			return 'bg-green-400';
-		if(pontuacao === 0)
-			return 'bg-red-400';
-		return 'bg-yellow-400';
-	}
-
-	return (
-		<div>
-			<div className={`${getScoreColor()} ${level === 0 ? 'shadow-md' : 'mb-2 border-white border-2'} p-2 md:p-3 border rounded-sm`}>
-				<div className="form-group !pb-0 md:gap-2">
-					<TextareaAutosize readOnly value={enunciado} className="bg-white bg-opacity-90" />
-					{resposta &&
-						<TextareaAutosize readOnly value={resposta} className="bg-white bg-opacity-90" />
-					}
-					{questoes &&
-						<div>
-							<button
-								type="button"
-								onClick={() => setCollapsed(prev => !prev)}
-								className="flex items-center gap-1 text-white hover:opacity-75 transition-all"
-								title={collapsed ? 'Expandir' : 'Colapsar'}
-							>
-								<IoIosArrowForward className={`${collapsed ? '' : 'rotate-90'} transition-all`} />
-								<span className="mb-[2px]">{ collapsed ? 'ver questões' : 'esconder questões' }</span>
-							</button>
-							<div className={`${collapsed ? 'hidden' : ''}`}>
-								{questoes.map((q, i) =>
-									<Question key={i} question={q} level={level + 1} />
-								)}
-							</div>
-						</div>
-					}
-					<div className="flex justify-end">
-						<div className="flex items-center gap-2">
-							<label className="text-white">{questoes ? 'Total' : 'Pontuação'}:</label>
-							<input type="text" readOnly value={formatGrade(pontuacao)} className="w-16 bg-white bg-opacity-90" />
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	);
 }
