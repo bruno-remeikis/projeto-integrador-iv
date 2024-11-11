@@ -1,5 +1,5 @@
 import { useConfig } from "@/contexts/ConfigContext";
-import { Modal, VisibilityModalProps } from "../Modal"
+import { Modal, VisibilityModalProps } from "./Modal"
 import { Switch } from "../simple/Switch";
 import { Tooltip } from "../simple/Tooltip";
 import { testTypes } from "@/models/TestType";

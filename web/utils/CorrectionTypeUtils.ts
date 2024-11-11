@@ -1,18 +1,26 @@
-export const correctionTypes = {
+import { CSSProperties } from "react"
+
+type CorrectionTypeProps = {
+    translation: string,
+    highlightStyle: CSSProperties, //'bg-red-500',
+    tooltipStyle: CSSProperties,
+}
+
+export const correctionTypes: {[key: string]: CorrectionTypeProps} = {
 	grammatical: {
         translation: 'Gramatical',
-        highlightStyle: 'bg-red-500',
-        tooltipStyle: 'text-red-500',
+        highlightStyle: { backgroundColor: 'rgba(255, 0, 0, 0.5)' },
+        tooltipStyle: { color: 'red' },
 
     },
 	reference: {
         translation: 'Referência',
-        highlightStyle: 'bg-blue-500',
-        tooltipStyle: 'text-blue-500',
+        highlightStyle: { backgroundColor: 'rgba(0, 0, 255, 0.5)' },
+        tooltipStyle: { color: 'blue' },
     },
 	other: {
         translation: 'Outro',
-        highlightStyle: 'bg-yellow-500',
-        tooltipStyle: 'text-yellow-500',
+        highlightStyle: { backgroundColor: 'rgba(255, 127, 0, 0.5)' },
+        tooltipStyle: { color: 'orange' },
     }
 }
