@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CorrectedTest, TestQuestion } from "@/models/CorrectedTest"; 
+import { CorrectedTest } from "@/models/CorrectedTest"; 
 import { PageTitle } from "@/components/PageTitle";
 import { formatGrade, joinOrEmpty } from "@/utils/StringUtils";
 import { Tooltip } from "@/components/simple/Tooltip";
@@ -66,9 +66,10 @@ export default function DetailsPage() {
 
     const elements: React.ReactNode[] = [];
     let auxText = '';
+    let key = 0;
 
     function pushSimple() {
-      elements.push(<span key={elements.length}>{ auxText }</span>);
+      elements.push(<span key={key++}>{ auxText }</span>);
       auxText = '';
     }
 
@@ -76,7 +77,7 @@ export default function DetailsPage() {
 
       if (char === '\n') {
         pushSimple();
-        elements.push(<br key={elements.length + '-br'} />);
+        elements.push(<br key={key++} />);
       }
       else if (excerptStarts.includes(i) && i !== 0) {
         pushSimple();
@@ -87,9 +88,10 @@ export default function DetailsPage() {
           pushSimple();
         }
         else {
+          const typeProps = correctionTypes[correction.type];
           elements.push(
-            <Tooltip key={elements.length} content={<CorrectionTooltipDescription correction={correction} />}>
-              <span className={`${correctionTypes[correction.type].highlightStyle} cursor-help`}>{ auxText }</span>
+            <Tooltip key={key++} content={<CorrectionTooltipDescription correction={correction} />}>
+              <span className="cursor-help" style={typeProps.highlightStyle}>{ auxText }</span>
             </Tooltip>
           );
           auxText = '';
