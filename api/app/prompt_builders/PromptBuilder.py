@@ -33,7 +33,6 @@ class PromptBuilder(ABC):
         sb.ln(f'- Deve ter o campo "pontuacao" recebendo um número decimal de 0 a {PromptBuilder.MAX_SCORE}. {self._getScoringCriteria()};')
         sb.ln('Não inclua no JSON os trechos da prova que não se adequarem nos itens mencionados acima.')
         sb.ln('Sua resposta deve ser apenas o JSON plano. Não utilize quebras de linha ou "Fenced Code Blocks".')
-        # sb.ln('Nos textos, caso encontre aspas, coloque uma contra-barra antes (\\", \\\')')
         sb.ln()
         sb.ln(config.prompt, condition=(config.prompt)) # Prompt adicional do usuário
         sb.ln()
