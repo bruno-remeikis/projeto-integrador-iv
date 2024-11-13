@@ -5,10 +5,10 @@ from models.UploadConfig import UploadConfig
 
 class DiscursivePromptBuilder(PromptBuilder):
     def __init__(self):
-        super().__init__('Avaliação Dissertativa')
-        
-    def _getScoringCriteria(self):
-        return "Seu valor deve representar a média aritmétoca simples entre as pontuações das questões"
+        super().__init__(
+            'Avaliação Dissertativa',
+            scoringCriteria="Seu valor deve representar a média aritmética simples entre as pontuações das questões"
+        )
         
     def _buildPrompt(self, sb: StringBuilder, config: UploadConfig):
         sb.ln('- Identifique a área de conhecimento da avaliação e informe-a no campo "area_conhecimento" do JSON no formato de texto. Caso identifique mais de uma área de conhecimento, coloque os valores em array;',

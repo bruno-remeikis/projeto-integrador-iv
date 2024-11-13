@@ -5,13 +5,14 @@ export type TestQuestion = {
   pontuacao: number;
 };
 
-export type Excerpt = {
+export type ExcerptLocale = {
   start: number;
   end: number;
 }
 
 export type EssayCorrection = {
-  excerpt: Excerpt;
+  excerpt: string;
+  excerptLocale?: ExcerptLocale;
   type: 'grammatical' | 'reference' | 'other';
   reason: string;
   decrement: number;

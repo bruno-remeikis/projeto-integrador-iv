@@ -30,3 +30,10 @@ def instantiatePromptBuilder(testType: str) -> PromptBuilder:
             if isinstance(obj, PromptBuilder):
                 return obj
         raise InvalidTestTypeError(testType)
+    
+
+def teste():
+   resp = ai_connector.ask('A partir de agora, se alguem perguntar seu nome, responda "Pálio Weekend"')
+   print(resp)
+   resp = ai_connector.ask('Qual o seu nome?')
+   print(resp)

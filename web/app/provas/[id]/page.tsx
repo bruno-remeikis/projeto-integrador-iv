@@ -61,44 +61,51 @@ export default function DetailsPage() {
       return text;
     }
 
-    const excerptStarts = test.correction?.flatMap(c => c.excerpt.start);
-    const excerptEnds = test.correction?.flatMap(c => c.excerpt.end);
+    // Processa a localização (índices) de cada trecho incorreto
+    test.correction.forEach(c => {
+      const start = text.indexOf(c.excerpt)
+      c.excerptLocale = { start, end: start + c.excerpt.length };
+    })
+
+    // Guarda listas dos índices dos trechos incorretos
+    const excerptStarts = test.correction?.flatMap(c => c.excerptLocale?.start);
+    const excerptEnds = test.correction?.flatMap(c => c.excerptLocale?.end);
 
     const elements: React.ReactNode[] = [];
     let auxText = '';
-    let key = 0;
+    //let key = 0;
 
-    function pushSimple() {
-      elements.push(<span key={key++}>{ auxText }</span>);
+    function pushSimple(i: number) {
+      elements.push(<span key={i}>{ auxText }</span>);
       auxText = '';
     }
 
     text.split('').forEach((char, i) => {
 
       if (char === '\n') {
-        pushSimple();
-        elements.push(<br key={key++} />);
+        pushSimple(i);
+        elements.push(<br key={`br-${i}`} />);
       }
       else if (excerptStarts.includes(i) && i !== 0) {
-        pushSimple();
+        pushSimple(i);
       }
       else if (excerptEnds.includes(i)) {
-        const correction = test?.correction?.filter(c => c.excerpt.end === i)[0]; //! REAVALIAR [0]
+        const correction = test?.correction?.filter(c => c.excerptLocale?.end === i)[0]; //! REAVALIAR [0]
         if (!correction) {
-          pushSimple();
+          pushSimple(i);
         }
         else {
           const typeProps = correctionTypes[correction.type];
           elements.push(
-            <Tooltip key={key++} content={<CorrectionTooltipDescription correction={correction} />}>
-              <span className="cursor-help" style={typeProps.highlightStyle}>{ auxText }</span>
+            <Tooltip key={i} content={<CorrectionTooltipDescription correction={correction} />}>
+              <span className={`rounded cursor-help`} style={typeProps.highlightStyle}>{ auxText }</span>
             </Tooltip>
           );
           auxText = '';
         }
       }
       else if (i === text.length - 1) {
-        pushSimple();
+        pushSimple(i);
       }
 
       auxText += char;
@@ -147,7 +154,7 @@ export default function DetailsPage() {
 
 					{test?.essay !== undefined &&
 					<div
-						contentEditable
+						//contentEditable
 						className="border p-2 rounded text-justify"
 					>
 						{ renderEssay() }	

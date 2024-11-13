@@ -112,3 +112,8 @@ async def get_templates():
     ]
     return templates
 """
+
+
+@app.get('/teste')
+async def teste():
+    ai.teste()

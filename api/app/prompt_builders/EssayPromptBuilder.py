@@ -5,25 +5,25 @@ from models.UploadConfig import UploadConfig
 
 class EssayPromptBuilder(PromptBuilder):
     def __init__(self):
-        super().__init__('Redação') # Dissertativa-Argumentativa
+        super().__init__(
+            'Redação',  # Dissertativa-Argumentativa
+            scoringCriteria=f"Pontue a redação seguindo os critérios e competências usados no ENEM, porém, ao invés da pontuação máxima ser 1000, utilize {PromptBuilder.MAX_SCORE}",
+        )
         
-    def _getScoringCriteria(self):
-        #return "Defina o valor deste campo de acordo com o quão corretas estão as informações da redação e as regras gramáticais"
-        return "Defina o valor deste campo de acordo com o criério de avaliação utilizado na redação do ENEM"
-    
     def _buildPrompt(self, sb: StringBuilder, config: UploadConfig):
         sb.ln(f'- O tema da redação é "{config.theme}"',
             config.theme)
         sb.ln(f'- Deve ter o campo "theme". Tente identificar o tema da redação e o armazene no campo "theme". Caso ele não esteja explícito no texto, armazene `null`;',
             not config.theme)
         
-        sb.ln('- Deve ter o campo "essay" armazenando redação redigida pelo autor;')
+        sb.ln('- Deve ter o campo "essay" armazenando toda a redação escrita pelo autor, sem nenhuma outra informação. Não guarde neste campo o tema, o título da redação ou quaisquer outra informação;')
         
         sb.ln('- Deve ter o campo "correction" armazenando uma lista de objetos. Cada item da lista corresponderá a uma justificativa. Cada justificativa informará o motivo pelo qual você decrementará o valor da pontuação;')
         
-        sb.ln('- Cada justificativa deve ter o campo "excerpt". Faça um recorte do trecho da redação que está incorreto e armazene nesse campo um json com os campos "start" e "end", armazenando os índices inicial e final, respectivamente, dos caracteres onde o trecho incorreto se encontra em "essay";')
+        #sb.ln('- Cada justificativa deve ter o campo "excerpt". Faça um recorte do trecho da redação que está incorreto e armazene nesse campo um json com os campos "start" e "end", armazenando os índices inicial e final, respectivamente, dos caracteres onde o trecho incorreto se encontra em "essay";')
+        sb.ln('- Cada justificativa deve ter o campo "excerpt", armazenando o trecho exato da redação que está incorreto;')
         
-        sb.ln('- Cada justificativa deve ter o campo "type" armazenando o tipo de erro. Os possíveis valores são: ')
+        sb.ln('- Cada justificativa deve ter o campo "type" armazenando o tipo de erro de acordo com as competências usadas na redação do ENEM. Os possíveis valores são: ')
         sb.il('"grammatical" (falha no domínio da escrita formal da língua nativa), ')
         sb.il('"theme" (falha ao compreender o tema e não fugir do que é proposto (caso haja tema bem definido)), ')
         sb.il('"point-of-view" (Falha ao selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista), ')

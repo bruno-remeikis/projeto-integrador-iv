@@ -12,7 +12,7 @@ export function CorrectionTooltipDescription({ correction }: CorrectionTooltipDe
   return (
     <div className="max-w-[50vw]">
       <div className="flex gap-1">
-        <span className="text-gray-500">Tipo:</span>
+        <span className="text-gray-500">Competência:</span>
         <span style={typeProps.tooltipStyle}>{ typeProps.translation }</span>
       </div>
 
