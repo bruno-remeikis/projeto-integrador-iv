@@ -18,7 +18,7 @@ export const correctionTypes: {[key: string]: CorrectionTypeProps} = {
         highlightStyle: { backgroundColor: 'rgb(147, 197, 253)' },
         tooltipStyle: { color: 'rgb(37, 99, 235)' },
     },
-	'point-of-view': {
+	defense: {
         translation: 'Organização e defesa',
         highlightStyle: { backgroundColor: 'rgb(134, 239, 172)' },
         tooltipStyle: { color: 'rgb(22, 163, 74)' },
@@ -28,7 +28,7 @@ export const correctionTypes: {[key: string]: CorrectionTypeProps} = {
         highlightStyle: { backgroundColor: 'rgb(253, 224, 71)' },
         tooltipStyle: { color: 'rgb(234, 179, 8)' },
     },
-	'human-rights': {
+	intervention: {
         translation: 'Proposta de intervenção',
         highlightStyle: { backgroundColor: 'rgb(216, 180, 254)' },
         tooltipStyle: { color: 'rgb(147, 51, 234)' },

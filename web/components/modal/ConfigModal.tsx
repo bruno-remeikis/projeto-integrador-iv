@@ -3,6 +3,8 @@ import { Modal, VisibilityModalProps } from "./Modal"
 import { Switch } from "../simple/Switch";
 import { Tooltip } from "../simple/Tooltip";
 import { testTypes } from "@/models/TestType";
+import { CiWarning } from "react-icons/ci";
+import { IoIosWarning } from "react-icons/io";
 
 export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
 
@@ -45,7 +47,14 @@ export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
         </div>
       </div>
       <div className="mt-3">
-        <label htmlFor="area-prompt">Prompt</label>
+        <div className="flex items-center gap-2">
+          <label htmlFor="area-prompt">Instrução adicional</label>
+          <Tooltip type='warn' content="Suas instruções podem afetar a correção das provas e até impedir que as mesmas sejam corrigidas">
+            <div>
+              <IoIosWarning className="text-yellow-500" />
+            </div>
+          </Tooltip>
+        </div>
         <textarea
           id='area-prompt'
           rows={4}
@@ -66,17 +75,21 @@ export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
 
 function TestTypeCard({ testTypeKey }: { testTypeKey: string }) {
 
-  const { name, description, Icon } = testTypes[testTypeKey];
+  const { name, description, Icon, allowed } = testTypes[testTypeKey];
 
   const { config, selectTestType } = useConfig();
 
   const selected = config.testTypeKey === testTypeKey;
 
   return (
-    <Tooltip content={description}>
+    <Tooltip content={allowed !== false ? description : null}>
       <div
-        className={`flex flex-col items-center p-2 border rounded cursor-pointer ${selected ? 'bg-blue-50 border-blue-500' : 'hover:bg-blue-50 hover:border-blue-500'} transition-all`}
-        onClick={() => selectTestType(testTypeKey)}
+        className={`flex flex-col items-center p-2 border rounded cursor-pointer ${allowed === false ? 'opacity-50 !cursor-default' : ( selected ? 'bg-blue-50 border-blue-500' : 'hover:bg-blue-50 hover:border-blue-500' )} transition-all`}
+        onClick={() => {
+          if (allowed !== false) {
+            selectTestType(testTypeKey);
+          }
+        }}
       >
         <Icon />
         <span>{ name }</span>

@@ -18,18 +18,22 @@ class EssayPromptBuilder(PromptBuilder):
         
         sb.ln('- Deve ter o campo "essay" armazenando toda a redação escrita pelo autor, sem nenhuma outra informação. Não guarde neste campo o tema, o título da redação ou quaisquer outra informação;')
         
-        sb.ln('- Deve ter o campo "correction" armazenando uma lista de objetos. Cada item da lista corresponderá a uma justificativa. Cada justificativa informará o motivo pelo qual você decrementará o valor da pontuação;')
+        sb.ln('- Deve ter o campo "correction" armazenando uma lista de objetos. Cada item da lista corresponderá a uma justificativa. Cada justificativa guardará um ponto de melhoria em um trecho da redação;')
+        sb.ln('- Corrija a redação seguindo os critérios e competências usados no ENEM. As justificativas da correção serão guardadas em "correction" seguindo os critérios a seguir;')
         
         #sb.ln('- Cada justificativa deve ter o campo "excerpt". Faça um recorte do trecho da redação que está incorreto e armazene nesse campo um json com os campos "start" e "end", armazenando os índices inicial e final, respectivamente, dos caracteres onde o trecho incorreto se encontra em "essay";')
-        sb.ln('- Cada justificativa deve ter o campo "excerpt", armazenando o trecho exato da redação que está incorreto;')
+        sb.ln('- Cada justificativa deve ter o campo "excerpt", armazenando o trecho exato da redação que pode ser melhorado;')
         
-        sb.ln('- Cada justificativa deve ter o campo "type" armazenando o tipo de erro de acordo com as competências usadas na redação do ENEM. Os possíveis valores são: ')
-        sb.il('"grammatical" (falha no domínio da escrita formal da língua nativa), ')
-        sb.il('"theme" (falha ao compreender o tema e não fugir do que é proposto (caso haja tema bem definido)), ')
-        sb.il('"point-of-view" (Falha ao selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista), ')
-        sb.il('"argumentation" (falha no conhecimento dos mecanismos linguísticos necessários para a construção da argumentação) ou ')
-        sb.il('"human-rights" (falha em respeitar aos direitos humanos);')
+        sb.il('- Cada justificativa deve ter o campo "type" armazenando o tipo de erro de acordo com as competências usadas na redação do ENEM. Os possíveis valores são: ')
+        sb.il('"grammatical" (domínio da escrita formal da língua nativa pode melhorar), ')
+        sb.il('"theme" (compreenção do tema e não fugir do que é proposto (caso haja tema bem definido) podem melhorar), ')
+        sb.il('"defense" (organização e/ou defesa pode(m) melhorar), ')
+        sb.il('"argumentation" (conhecimento dos mecanismos linguísticos necessários para a construção da argumentação podem melhorar) ou ')
+        sb.ln('"intervention" (proposta de intervenção pode melhorar);')
         
-        sb.ln('- Cada justificativa deve ter o campo "reason" contendo uma descrição do por que você considerou o trecho como um erro;')
+        sb.il('Assim como no ENEM, cada uma das competências deve equivaler a 20% do valor total da redação;')
+        # sb.ln('Dentro destes 20%, ')
         
-        sb.ln('- Cada justificativa deve ter o campo "decrement" contendo o valor que foi decrementado da pontuação principal por este erro;')
+        sb.ln('- Cada justificativa deve ter o campo "reason" contendo uma descrição de como o trecho pode melhorar;')
+        
+        sb.ln('- Cada justificativa deve ter o campo "decrement" contendo o valor que será decrementado da pontuação total, que será armazenada no campo "pontuacao" do JSON;')

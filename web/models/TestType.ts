@@ -9,6 +9,7 @@ export type TestType = {
     name: string;
     description: string;
     Icon: IconType;
+    allowed?: boolean;
 }
 
 export const testTypes: { [key: string]: TestType } = {
@@ -16,25 +17,28 @@ export const testTypes: { [key: string]: TestType } = {
         name: 'Prova',
         description: 'Questões discursivas e objetivas',
         Icon: TbTextSpellcheck,
+        allowed: false,
     },
     'Discursive': {
         name: 'Discursiva',
         description: '',
-        Icon: GoTypography
+        Icon: GoTypography,
     },
     'Objective': {
         name: 'Objetiva',
         description: '',
-        Icon: CiSquareCheck
+        Icon: CiSquareCheck,
+        allowed: false,
     },
     'Essay': {
         name: 'Redação',
-        description: '',
-        Icon: SiWritedotas
+        description: 'Redação no padrão ENEM (dissertativa-argumentativa)',
+        Icon: SiWritedotas,
     },
     'Work': {
         name: 'Trabalho',
         description: 'Trabalho livre',
-        Icon: GrWorkshop
+        Icon: GrWorkshop,
+        allowed: false,
     },
 }
