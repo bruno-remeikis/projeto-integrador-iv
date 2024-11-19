@@ -10,6 +10,7 @@ import { essayMock } from "@/mocks/CorrectedTestMocks";
 import { Question } from "@/components/Question";
 import { CorrectionTooltipDescription } from "@/components/CorrectionTooltipDescription";
 import { correctionTypes } from "@/utils/CorrectionTypeUtils";
+import { CorrectionOutput } from "@/components/CorrectionOutput";
 
 export default function DetailsPage() {
   
@@ -50,69 +51,6 @@ export default function DetailsPage() {
 
   }, [router, id]);
 
-  function renderEssay() {
-    const text = test?.essay;
-
-    if (!text) {
-      return '';
-    }
-
-    if (!test?.correction) {
-      return text;
-    }
-
-    // Processa a localização (índices) de cada trecho incorreto
-    test.correction.forEach(c => {
-      const start = text.indexOf(c.excerpt)
-      c.excerptLocale = { start, end: start + c.excerpt.length };
-    })
-
-    // Guarda listas dos índices dos trechos incorretos
-    const excerptStarts = test.correction?.flatMap(c => c.excerptLocale?.start);
-    const excerptEnds = test.correction?.flatMap(c => c.excerptLocale?.end);
-
-    const elements: React.ReactNode[] = [];
-    let auxText = '';
-    //let key = 0;
-
-    function pushSimple(i: number) {
-      elements.push(<span key={i}>{ auxText }</span>);
-      auxText = '';
-    }
-
-    text.split('').forEach((char, i) => {
-
-      if (char === '\n') {
-        pushSimple(i);
-        elements.push(<br key={`br-${i}`} />);
-      }
-      else if (excerptStarts.includes(i) && i !== 0) {
-        pushSimple(i);
-      }
-      else if (excerptEnds.includes(i)) {
-        const correction = test?.correction?.filter(c => c.excerptLocale?.end === i)[0]; //! REAVALIAR [0]
-        if (!correction) {
-          pushSimple(i);
-        }
-        else {
-          const typeProps = correctionTypes[correction.type];
-          elements.push(
-            <Tooltip key={i} content={<CorrectionTooltipDescription correction={correction} />}>
-              <span className={`rounded cursor-help`} style={typeProps.highlightStyle}>{ auxText }</span>
-            </Tooltip>
-          );
-          auxText = '';
-        }
-      }
-      else if (i === text.length - 1) {
-        pushSimple(i);
-      }
-
-      auxText += char;
-    });
-	  return elements;
-  }
-
   return (
 		<div>
 			<PageTitle goBackTo="/provas">Detalhes da Avaliação</PageTitle>
@@ -152,13 +90,8 @@ export default function DetailsPage() {
 						)}
 					</div>}
 
-					{test?.essay !== undefined &&
-					<div
-						//contentEditable
-						className="border p-2 rounded text-justify"
-					>
-						{ renderEssay() }	
-					</div>}
+					{test?.essay !== undefined && test?.correction &&
+					<CorrectionOutput text={test.essay} correction={test.correction} />}
 				</div>
 			</main>
 		</div>
