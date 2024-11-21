@@ -1,14 +1,17 @@
-import { EssayCorrection } from "@/models/CorrectedTest";
+import { Correction } from "@/models/CorrectedTest";
 import { correctionTypes } from "@/utils/CorrectionTypeUtils";
 import { CorrectionTooltipDescription } from "./CorrectionTooltipDescription";
 import { Tooltip } from "./simple/Tooltip";
+import { CSSProperties } from "react";
 
 type CorrectionOutputProps = {
   text: string;
-  correction: EssayCorrection[];
+  correction: Correction[];
+  className?: string;
+  style?: CSSProperties;
 }
 
-export function CorrectionOutput({ text, correction }: CorrectionOutputProps) {
+export function CorrectionOutput({ text, correction, className = '', style }: CorrectionOutputProps) {
 
   function render() {
     if (!text) {
@@ -56,7 +59,7 @@ export function CorrectionOutput({ text, correction }: CorrectionOutputProps) {
           const typeProps = correctionTypes[c.type];
           elements.push(
             <Tooltip key={i} content={<CorrectionTooltipDescription correction={c} />}>
-              <span className={`rounded cursor-help`} style={typeProps.highlightStyle}>{ auxText }</span>
+              <span className="rounded cursor-help px-[0.15rem]" style={typeProps.highlightStyle}>{ auxText }</span>
             </Tooltip>
           );
           auxText = '';
@@ -72,7 +75,7 @@ export function CorrectionOutput({ text, correction }: CorrectionOutputProps) {
   }
 
   return (
-    <div className="border p-2 rounded text-justify">
+    <div className={`border p-2 rounded text-justify ${className}`} style={style}>
       { render() }	
     </div>
   )

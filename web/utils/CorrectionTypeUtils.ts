@@ -1,3 +1,4 @@
+import { CorrectionType } from "@/models/CorrectedTest"
 import { CSSProperties } from "react"
 
 type CorrectionTypeProps = {
@@ -6,7 +7,7 @@ type CorrectionTypeProps = {
     tooltipStyle: CSSProperties,
 }
 
-export const correctionTypes: {[key: string]: CorrectionTypeProps} = {
+export const correctionTypes: {[key in CorrectionType]: CorrectionTypeProps} = {
 	grammatical: {
         translation: 'Domínio da língua',
         highlightStyle: { backgroundColor: 'rgb(252, 165, 165)' },
@@ -32,5 +33,10 @@ export const correctionTypes: {[key: string]: CorrectionTypeProps} = {
         translation: 'Proposta de intervenção',
         highlightStyle: { backgroundColor: 'rgb(216, 180, 254)' },
         tooltipStyle: { color: 'rgb(147, 51, 234)' },
+    },
+    other: {
+        translation: 'Correção',
+        highlightStyle: { backgroundColor: 'rgb(252, 165, 165)' },
+        tooltipStyle: { color: 'rgb(220, 38, 38)' },
     }
 }

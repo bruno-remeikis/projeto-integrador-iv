@@ -22,7 +22,7 @@ class EssayPromptBuilder(PromptBuilder):
         sb.ln('- Corrija a redação seguindo os critérios e competências usados no ENEM. As justificativas da correção serão guardadas em "correction" seguindo os critérios a seguir;')
         
         #sb.ln('- Cada justificativa deve ter o campo "excerpt". Faça um recorte do trecho da redação que está incorreto e armazene nesse campo um json com os campos "start" e "end", armazenando os índices inicial e final, respectivamente, dos caracteres onde o trecho incorreto se encontra em "essay";')
-        sb.ln('- Cada justificativa deve ter o campo "excerpt", armazenando o trecho exato da redação que pode ser melhorado;')
+        sb.ln('- Cada justificativa deve ter o campo "excerpt", armazenando o trecho exato da redação que está incorreto ou pode ser melhorado;')
         
         sb.il('- Cada justificativa deve ter o campo "type" armazenando o tipo de erro de acordo com as competências usadas na redação do ENEM. Os possíveis valores são: ')
         sb.il('"grammatical" (domínio da escrita formal da língua nativa pode melhorar), ')

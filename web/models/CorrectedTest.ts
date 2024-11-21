@@ -1,21 +1,24 @@
+export type CorrectionType = 'grammatical' | 'theme' | 'defense' | 'argumentation' | 'intervention' | 'other';
+
+export type Correction = {
+  excerpt: string;
+  excerptLocale?: ExcerptLocale;
+  type: CorrectionType; //
+  reason: string;
+  decrement: number;
+}
+
 export type TestQuestion = {
   enunciado: string;
   resposta?: string;
   questoes?: TestQuestion[];
   pontuacao: number;
+  correction: Correction[];
 };
 
 export type ExcerptLocale = {
   start: number;
   end: number;
-}
-
-export type EssayCorrection = {
-  excerpt: string;
-  excerptLocale?: ExcerptLocale;
-  type: 'grammatical' | 'reference' | 'other';
-  reason: string;
-  decrement: number;
 }
 
 export type CorrectedTest = {
@@ -33,5 +36,5 @@ export type CorrectedTest = {
   // Redação
   theme?: string;
   essay?: string;
-  correction?: EssayCorrection[];
+  correction?: Correction[];
 };

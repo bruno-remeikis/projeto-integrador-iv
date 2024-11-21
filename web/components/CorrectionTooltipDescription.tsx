@@ -1,8 +1,8 @@
-import { EssayCorrection } from "@/models/CorrectedTest"
+import { Correction } from "@/models/CorrectedTest"
 import { correctionTypes } from "@/utils/CorrectionTypeUtils"
 
 type CorrectionTooltipDescriptionProps = {
-  correction: EssayCorrection
+  correction: Correction
 }
 
 export function CorrectionTooltipDescription({ correction }: CorrectionTooltipDescriptionProps) {

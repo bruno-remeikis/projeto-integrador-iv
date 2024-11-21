@@ -3,6 +3,7 @@ import { formatGrade } from "@/utils/StringUtils";
 import { useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
 import TextareaAutosize from 'react-textarea-autosize';
+import { CorrectionOutput } from "./CorrectionOutput";
 
 type QuestionProps = {
 	question: TestQuestion,
@@ -15,6 +16,7 @@ export function Question({
 		resposta,
 		questoes,
 		pontuacao,
+		correction,
 	},
 	level = 0
 }: QuestionProps) {
@@ -35,7 +37,8 @@ export function Question({
 				<div className="form-group !pb-0 md:gap-2">
 					<TextareaAutosize readOnly value={enunciado} className="bg-white bg-opacity-90" />
 					{resposta &&
-						<TextareaAutosize readOnly value={resposta} className="bg-white bg-opacity-90" />
+						// <TextareaAutosize readOnly value={resposta} className="bg-white bg-opacity-90" />
+						<CorrectionOutput style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }} text={resposta} correction={correction || []} />
 					}
 					{questoes &&
 						<div>
