@@ -4,13 +4,16 @@ from models.UploadConfig import UploadConfig
 
 
 class DiscursivePromptBuilder(PromptBuilder):
-    def __init__(self):
+    def __init__(self, config: UploadConfig):
         super().__init__(
             'Avaliação Dissertativa',
-            scoringCriteria="Seu valor deve representar a média aritmética simples entre as pontuações das questões"
+            scoringCriteria='Seu valor deve representar a média aritmética simples entre os campos "pontuacao" de todas as questões.',
+            config=config,
         )
         
-    def _buildPrompt(self, sb: StringBuilder, config: UploadConfig):
+    def _buildPrompt(self, sb: StringBuilder):
+        config = self.config
+        
         sb.ln('- Identifique a área de conhecimento da avaliação e informe-a no campo "area_conhecimento" do JSON no formato de texto. Caso identifique mais de uma área de conhecimento, coloque os valores em array;',
             config.area)
         sb.ln('- Deve existir um campo "questoes", que será um array. Cada item deste array será um objeto correspondente a uma questão da prova educacional;')
@@ -31,3 +34,4 @@ class DiscursivePromptBuilder(PromptBuilder):
         sb.ln('- Cada justificativa deve ter o campo "type" armazenando "other"')
         sb.ln('- Cada justificativa deve ter o campo "reason" contendo uma descrição de como o trecho pode melhorar;')
         sb.ln('- Cada justificativa deve ter o campo "decrement" contendo o valor que foi decrementado em "pontuacao";')
+        

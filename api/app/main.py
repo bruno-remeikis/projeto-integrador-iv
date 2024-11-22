@@ -1,7 +1,6 @@
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
-import json
 import os
 import traceback
 
@@ -57,10 +56,9 @@ async def upload_file(
             # Extrai texto do arquivo
             test_text: str = await fp.process_file(file)
             # Envia texto para IA
-            test_result: str = ai.processTest(test_text, config)
+            json_ai_response = ai.processTest(test_text, config)
             # Converte a resposta da IA de string para JSON
-            json_test_result = json.loads(test_result)
-            results.append(json_test_result)
+            results.append(json_ai_response)
         except InvalidTestTypeError as e:
             print("Try to:\n" +
                  "\t1.  Import the PromptBuilder child class at ai_service.py\n" +

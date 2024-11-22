@@ -10,7 +10,7 @@ export function CorrectionTooltipDescription({ correction }: CorrectionTooltipDe
   const typeProps = correctionTypes[correction.type];
 
   return (
-    <div className="max-w-[50vw]">
+    <div>
       <div className="flex gap-1">
         <span className="text-gray-500">Competência:</span>
         <span style={typeProps.tooltipStyle}>{ typeProps.translation }</span>

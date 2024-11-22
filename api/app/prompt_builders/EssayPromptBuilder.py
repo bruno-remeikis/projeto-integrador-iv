@@ -4,13 +4,16 @@ from models.UploadConfig import UploadConfig
 
 
 class EssayPromptBuilder(PromptBuilder):
-    def __init__(self):
+    def __init__(self, config: UploadConfig):
         super().__init__(
             'Redação',  # Dissertativa-Argumentativa
             scoringCriteria=f"Pontue a redação seguindo os critérios e competências usados no ENEM, porém, ao invés da pontuação máxima ser 1000, utilize {PromptBuilder.MAX_SCORE}",
+            config=config,
         )
         
-    def _buildPrompt(self, sb: StringBuilder, config: UploadConfig):
+    def _buildPrompt(self, sb: StringBuilder):
+        config = self.config
+        
         sb.ln(f'- O tema da redação é "{config.theme}"',
             config.theme)
         sb.ln(f'- Deve ter o campo "theme". Tente identificar o tema da redação e o armazene no campo "theme". Caso ele não esteja explícito no texto, armazene `null`;',
@@ -37,3 +40,8 @@ class EssayPromptBuilder(PromptBuilder):
         sb.ln('- Cada justificativa deve ter o campo "reason" contendo uma descrição de como o trecho pode melhorar;')
         
         sb.ln('- Cada justificativa deve ter o campo "decrement" contendo o valor que será decrementado da pontuação total, que será armazenada no campo "pontuacao" do JSON;')
+        
+    def postProcess(self, json_response: str):
+        if self.config.theme:
+            json_response['theme'] = self.config.theme
+        return json_response

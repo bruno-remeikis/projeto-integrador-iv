@@ -4,15 +4,16 @@ import { CiSquareCheck } from "react-icons/ci";
 import { SiWritedotas } from "react-icons/si";
 import { GoTypography } from "react-icons/go";
 import { GrWorkshop } from "react-icons/gr";
+import { TestType } from "./Config";
 
-export type TestType = {
+export type TestTypeProps = {
     name: string;
     description: string;
     Icon: IconType;
     allowed?: boolean;
 }
 
-export const testTypes: { [key: string]: TestType } = {
+export const testTypes: { [key in TestType]: TestTypeProps } = {
     'Test': {
         name: 'Prova',
         description: 'Questões discursivas e objetivas',

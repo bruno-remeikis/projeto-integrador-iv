@@ -3,15 +3,24 @@ import { Modal, VisibilityModalProps } from "./Modal"
 import { Switch } from "../simple/Switch";
 import { Tooltip } from "../simple/Tooltip";
 import { testTypes } from "@/models/TestType";
-import { CiWarning } from "react-icons/ci";
 import { IoIosWarning } from "react-icons/io";
+import { Config, ConfigFromSwitch, TestType } from "@/models/Config";
+import { useState } from "react";
 
 export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
 
   const { config, setConfig } = useConfig();
 
+  const [requireTheme, setRequireTheme] = useState<boolean>(false);
+
   function close() {
     if (setVisible) {
+      if (config.testTypeKey === 'Essay' && !config.autoTheme && !config.theme.trim()) {
+        setRequireTheme(true);
+        alert('aaa');
+        return;
+      }
+
       setVisible(false);
     }
   }
@@ -19,33 +28,51 @@ export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
   return (
     <Modal
       visible={visible}
-      setVisible={setVisible}
+      setVisible={close}
       overlayClassName="relative p-6"
     >
       <h3 className="text-center">Configurações</h3>
+      
       <div className="mt-3">
         <h4 className="mb-1">Tipo de Avaliação</h4>
         <div className="grid grid-cols-3 gap-2">
-          {Object.keys(testTypes).map((testTypeKey, i) => <TestTypeCard key={i} testTypeKey={testTypeKey} />)}
+          {Object.keys(testTypes).map((type: string, i: number) =>
+            <TestTypeCard key={i} testTypeKey={type as TestType} />
+          )}
         </div>
       </div>
+
       <div className="mt-3">
         <h4 className="mb-1">Campos</h4>
         <div className="flex flex-col gap-2">
-          <Switch
-            id='switch-nome'
-            label="Nome do(s) aluno(s)"
-            checked={config.name}
-            setChecked={(value) => setConfig(prev => ({...prev, name: value}))}
-          />
-          <Switch
-            id='switch-area-conhecimento'
-            label="Área(s) de conhecimento"
-            checked={config.area}
-            setChecked={value => setConfig(prev => ({...prev, area: value}))}
-          />
+
+          <ConfigSwitch field="name" label="Nome do(s) aluno(s)" />
+
+          {config.testTypeKey === 'Discursive' &&
+          <ConfigSwitch field="area" label="Área(s) de conhecimento" />}
+
+          {config.testTypeKey === 'Essay' &&
+          <>
+            <ConfigSwitch field="autoTheme" label="Identificar tema da redação automaticamente" onChange={() => setRequireTheme(false)} />
+            <div>
+              <div>
+                <label htmlFor="inp-theme" className="text-sm font-extralight">Tema</label>
+                {!config.autoTheme &&
+                <span className="text-red-500 font-bold"> *</span>}
+              </div>
+              <input
+                id="inp-theme"
+                className={requireTheme ? 'border-red-500 border-2' : ''}
+                value={config.theme}
+                onChange={e => setConfig(prev => ({ ...prev, theme: e.target.value }))}
+                disabled={config.autoTheme}
+              />
+            </div>
+          </>}
+
         </div>
       </div>
+
       <div className="mt-3">
         <div className="flex items-center gap-2">
           <label htmlFor="area-prompt">Instrução adicional</label>
@@ -73,7 +100,7 @@ export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
 
 
 
-function TestTypeCard({ testTypeKey }: { testTypeKey: string }) {
+function TestTypeCard({ testTypeKey }: { testTypeKey: TestType }) {
 
   const { name, description, Icon, allowed } = testTypes[testTypeKey];
 
@@ -95,5 +122,32 @@ function TestTypeCard({ testTypeKey }: { testTypeKey: string }) {
         <span>{ name }</span>
       </div>
     </Tooltip>
+  )
+}
+
+
+
+type ConfigSwitchProps = {
+  field: keyof ConfigFromSwitch;
+  label: string;
+  onChange?: Function;
+}
+
+function ConfigSwitch({ field, label, onChange }: ConfigSwitchProps) {
+
+  const { config, setConfig } = useConfig();
+
+  return (
+    <Switch
+      id={`switch-${field}`}
+      label={label}
+      checked={config[field]}
+      setChecked={value => setConfig(prev => {
+        if (onChange) {
+          onChange();
+        }
+        return {...prev, [field]: value};
+      })}
+    />
   )
 }

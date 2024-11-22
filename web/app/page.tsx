@@ -12,6 +12,8 @@ import { ProgressBar } from "@/components/simple/ProgressBar";
 import { GoGear } from "react-icons/go";
 import { useConfig } from "@/contexts/ConfigContext";
 import { ConfigModal } from "@/components/modal/ConfigModal";
+import { testTypes } from "@/models/TestType";
+import { TestType } from "@/models/Config";
 
 export default function HomePage() {
 
@@ -45,6 +47,7 @@ export default function HomePage() {
     const formData = new FormData()
     formData.append('name', config.name.toString());
     formData.append('area', config.area.toString());
+    formData.append('theme', config.autoTheme ? '' : config.theme.toString().trim());
     formData.append('prompt', config.prompt.trim());
     formData.append('testType', config.testTypeKey);
     for (let i = 0; i < files.length; i++)
@@ -121,6 +124,24 @@ export default function HomePage() {
 
         <div className="section">
           <FileTable data={files ? Array.from(files) : []} onRemoveFile={handleOnRemoveFile} />
+        </div>
+
+        <div className="flex flex-col items-center mb-8">
+          <div>
+            <span className="text-gray-700">Tipo de avaliação: </span>
+            <span
+              className="text-xl text-blue-500 hover:text-blue-400 cursor-pointer transition-all"
+              onClick={openConfigModal}
+            >
+              { testTypes[config.testTypeKey].name.toLowerCase() }
+            </span>
+          </div>
+          <span
+            className="text-xs text-gray-500 hover:text-blue-500 cursor-pointer transition-all"
+            onClick={openConfigModal}
+          > 
+            Clique parar alterar
+          </span>
         </div>
 
         <div className="section flex justify-center gap-3">

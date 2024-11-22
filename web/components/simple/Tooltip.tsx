@@ -9,7 +9,7 @@ import React from "react"
 const typeStyle = {
     blank: '',
     info: 'bg-blue-500 text-blue-50 border-blue-600',
-    warn: 'bg-yellow-500 text-yellow-50 border-yellow-600',
+    warn: 'bg-yellow-500 text-white border-yellow-600',
     error: 'bg-red-500 text-red-50 border-red-600',
 }
 
@@ -30,9 +30,9 @@ export function Tooltip({ children, content, type, className = '' }: TooltipProp
                 </TooltipTrigger>
 
                 {content &&
-                <TooltipContent className={`${type ? typeStyle[type] : ''} ${className}`}>
+                <TooltipContent className={`max-w-[50vw] ${type ? typeStyle[type] : ''} ${className}`}>
                     {typeof content === 'string'
-                        ? <p>{ content }</p>
+                        ? <p /*className="text-justify"*/>{ content }</p>
                         : content }
                 </TooltipContent>}
                 
