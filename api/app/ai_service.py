@@ -27,13 +27,13 @@ def processTest(prova: str, config: UploadConfig):
 
 
 def instantiatePromptBuilder(testType: str, config: UploadConfig) -> PromptBuilder:
-        clazzName = testType + 'PromptBuilder'
-        if clazzName in globals():
-            clazz = globals()[clazzName]
-            obj = clazz(config)
-            if isinstance(obj, PromptBuilder):
-                return obj
-        raise InvalidTestTypeError(testType)
+    clazzName = testType + 'PromptBuilder'
+    if clazzName in globals():
+        clazz = globals()[clazzName]
+        obj = clazz(config)
+        if isinstance(obj, PromptBuilder):
+            return obj
+    raise InvalidTestTypeError(testType)
     
 
 def teste():

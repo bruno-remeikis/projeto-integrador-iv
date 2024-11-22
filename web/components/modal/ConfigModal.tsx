@@ -17,10 +17,9 @@ export function ConfigModal({ visible, setVisible }: VisibilityModalProps) {
     if (setVisible) {
       if (config.testTypeKey === 'Essay' && !config.autoTheme && !config.theme.trim()) {
         setRequireTheme(true);
-        alert('aaa');
+        alert('Informe o tema ou deixe que a IA o identifique automaticamente.');
         return;
       }
-
       setVisible(false);
     }
   }
