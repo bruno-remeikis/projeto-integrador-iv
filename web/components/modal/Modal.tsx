@@ -1,9 +1,12 @@
 import { FiX } from "react-icons/fi";
 
-type ModalProps = {
-  children: React.ReactNode;
+export type VisibilityModalProps = {
   visible?: boolean;
   setVisible?: (_: boolean) => void;
+}
+
+export type ModalProps = VisibilityModalProps & {
+  children: React.ReactNode;
   className?: string;
   overlayClassName?: string;
   hideCloseButton?: boolean;

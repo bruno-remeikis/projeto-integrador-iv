@@ -1,46 +1,43 @@
 from ai_connectors.ai_connector import AiConnector
 from ai_connectors.googleai_connector import GoogleAiCoonnector
-from pydantic import BaseModel
 
-from utils.string_utils import StringBuilder
+from models.UploadConfig import UploadConfig
+from exceptions import InvalidTestTypeError
+
+from prompt_builders.PromptBuilder import PromptBuilder
+#! Abaixo, importações necessárias para gerar instâncias dinâmicas. NÃO APAGAR!
+from prompt_builders.DiscursivePromptBuilder import DiscursivePromptBuilder
+from prompt_builders.EssayPromptBuilder import EssayPromptBuilder
+
+import json
 
 
 ai_connector: AiConnector = GoogleAiCoonnector()
 
 
-class UploadConfig(BaseModel):
-    name: bool = True
-    area: bool = True
-    prompt: str = ''
-
-
-def processTest(prova: str, config: UploadConfig) -> str:
-    maxScore = 100
-    
-    sb = StringBuilder()
-    sb.ln('O texto entre "<<<INICIO>>>" e "<<<FIM>>>" é uma prova educacional.')
-    sb.ln('Sua resposta deve ser um arquivo JSON, seguindo as seguintes regras:')
-    sb.ln('- Identifique o nome de quem realizou a avaliação e guarde isto no campo "nome_aluno". Caso identifique mais de uma pessoa, seus nomes devem ficar em um array. Caso não identifique nome algum, guarde `null`;',
-        condition=config.name)
-    sb.ln('- Identifique a área de conhecimento da prova e informe-a no campo "area_conhecimento" do JSON no formato de texto. Caso identifique mais de uma área de conhecimento, coloque os valores em array;',
-        config.area)
-    sb.ln('- Deve existir um campo "questoes", que será um array. Cada item deste array será um objeto correspondente a uma questão da prova educacional;')
-    sb.ln('- Identifique na prova educacional o enunciado e a resposta de cada questão da prova. Estes devem estar contidos nos campos "enunciado" e "resposta", respectivamente. Cada uma das questões deve estar contida no array "questoes". Não faça nenhuma alteração no enunciado ou na resposta. Insira-os no JSON da forma como estão na prova educacional;')
-    sb.ln(f'- Além dos campos citados no item acima, deve existir o campo "pontuacao", sendo ele um número decimal de 0 a {maxScore}. Defina o valor deste campo de acordo com o quão certa a resposta da questão está;')
-    sb.ln('- Caso a questão possua subquestões, substitua o campo "resposta" por "questoes", que será, novamente, um array contendo cada uma das subquestões desta questão. Além disso, cada subquestão deve possuir o mesmo formato de uma questão;')
-    sb.ln('- Caso a questão possua subquestões, o valor de seu campo "pontuacao" deve ser a média aritmétoca simples entre as pontuações de suas subquestões;')
-    sb.ln('- Por fim, o JSON deve conter o campo "pontuacao", que deve ser a média aritmétoca simples entre as pontuações das questões.')
-    sb.ln('Não inclua no JSON os trechos da prova que não se adequarem nos itens mencionados acima.')
-    sb.ln('Sua resposta deve ser apenas o JSON plano. Não utilize quebras de linha ou "Fenced Code Blocks".')
-    sb.ln()
-    sb.ln(config.prompt, condition=(len(config.prompt) > 0)) # Prompt adicional do usuário
-    sb.ln()
-    sb.ln('Prova educacional:')
-    sb.ln('<<<INICIO>>>')
-    sb.ln(prova)
-    sb.ln('<<<FIM>>>')
-    
-    prompt = sb.toString()
+def processTest(prova: str, config: UploadConfig):
+    prompt_builder: PromptBuilder = instantiatePromptBuilder(config.testType, config)
+    prompt = prompt_builder.processPrompt(prova)
+    print(prompt)
     
     ai_response = ai_connector.ask(prompt)
-    return ai_response
+    json_response = json.loads(ai_response)
+    json_response = prompt_builder.postProcess(json_response)
+    return json_response
+
+
+def instantiatePromptBuilder(testType: str, config: UploadConfig) -> PromptBuilder:
+    clazzName = testType + 'PromptBuilder'
+    if clazzName in globals():
+        clazz = globals()[clazzName]
+        obj = clazz(config)
+        if isinstance(obj, PromptBuilder):
+            return obj
+    raise InvalidTestTypeError(testType)
+    
+
+def teste():
+   resp = ai_connector.ask('A partir de agora, se alguem perguntar seu nome, responda "Pálio Weekend"')
+   print(resp)
+   resp = ai_connector.ask('Qual o seu nome?')
+   print(resp)

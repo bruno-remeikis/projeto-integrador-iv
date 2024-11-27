@@ -2,17 +2,19 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { CorrectedTest, TestQuestion } from "@/models/CorrectedTest"; 
-import TextareaAutosize from 'react-textarea-autosize';
+import { CorrectedTest } from "@/models/CorrectedTest"; 
 import { PageTitle } from "@/components/PageTitle";
 import { formatGrade, joinOrEmpty } from "@/utils/StringUtils";
-import { IoIosArrowForward } from "react-icons/io";
-import { useConfig } from "@/contexts/ConfigContext";
+import { Tooltip } from "@/components/simple/Tooltip";
+import { essayMock } from "@/mocks/CorrectedTestMocks";
+import { Question } from "@/components/Question";
+import { CorrectionTooltipDescription } from "@/components/CorrectionTooltipDescription";
+import { correctionTypes } from "@/utils/CorrectionTypeUtils";
+import { CorrectionOutput } from "@/components/CorrectionOutput";
 
 export default function DetailsPage() {
   
   const router = useRouter();
-  const { config } = useConfig();
   const { id } = useParams(); // Obtém o id da URL
   
   const [test, setTest] = useState<CorrectedTest>();
@@ -23,6 +25,12 @@ export default function DetailsPage() {
       console.warn('ID da avaliação não informado');
       return;
     }
+
+  // Para testes
+	if (id === 'teste') {
+		setTest(essayMock);
+		return;
+	}
 
     const storedTests = sessionStorage.getItem('tests');
     if (!storedTests) {
@@ -41,7 +49,7 @@ export default function DetailsPage() {
 
     setTest(test);
 
-  }, [id]);
+  }, [router, id]);
 
   return (
 		<div>
@@ -50,16 +58,22 @@ export default function DetailsPage() {
 				<div className="section">
 					<div className="md:flex gap-3">
 
-						{config?.name &&
+						{test?.nome_aluno !== undefined &&
 						<div className="form-group flex-1">
-							<label>Aluno{Array.isArray(test?.nome_aluno) ? 's' : ''}</label>
+							<label>Aluno{Array.isArray(test.nome_aluno) ? 's' : ''}</label>
 							<input type="text" readOnly value={ joinOrEmpty(test?.nome_aluno) } />
 						</div>}
 
-						{config?.area && 
+						{test?.area_conhecimento !== undefined && 
 						<div className="form-group flex-1">
-							<label>Área{Array.isArray(test?.area_conhecimento) ? 's' : ''} de Conhecimento</label>
+							<label>Área{Array.isArray(test.area_conhecimento) ? 's' : ''} de Conhecimento</label>
 							<input type="text" readOnly value={ joinOrEmpty(test?.area_conhecimento) + ', História, Geografia' } />
+						</div>}
+
+						{test?.theme !== undefined && 
+						<div className="form-group flex-1">
+							<label>Tema</label>
+							<input type="text" readOnly value={test.theme} />
 						</div>}
 
 						<div className="form-group w-20">
@@ -69,76 +83,17 @@ export default function DetailsPage() {
 
 					</div>
 
+					{test?.questoes !== undefined &&
 					<div className="grid md:grid-cols-2 gap-3 md:gap-6">
-						{test?.questoes?.map((q, i) =>
+						{test.questoes.map((q, i) =>
 							<Question key={i} question={q} />
 						)}
-					</div>
+					</div>}
+
+					{test?.essay !== undefined && test?.correction &&
+					<CorrectionOutput text={test.essay} correction={test.correction} />}
 				</div>
 			</main>
-		</div>
-	);
-}
-
-type QuestionProps = {
-	question: TestQuestion,
-	level?: number;
-}
-
-function Question({
-	question: {
-		enunciado,
-		resposta,
-		questoes,
-		pontuacao
-	},
-	level = 0
-}: QuestionProps) {
-
-	const [collapsed, setCollapsed] = useState<boolean>(true);
-
-	function getScoreColor() {
-		if(pontuacao === 1)
-			return 'bg-green-400';
-		if(pontuacao === 0)
-			return 'bg-red-400';
-		return 'bg-yellow-400';
-	}
-
-	return (
-		<div>
-			<div className={`${getScoreColor()} ${level === 0 ? 'shadow-md' : 'mb-2 border-white border-2'} p-2 md:p-3 border rounded-sm`}>
-				<div className="form-group !pb-0 md:gap-2">
-					<TextareaAutosize readOnly value={enunciado} className="bg-white bg-opacity-90" />
-					{resposta &&
-						<TextareaAutosize readOnly value={resposta} className="bg-white bg-opacity-90" />
-					}
-					{questoes &&
-						<div>
-							<button
-								type="button"
-								onClick={() => setCollapsed(prev => !prev)}
-								className="flex items-center gap-1 text-white hover:opacity-75 transition-all"
-								title={collapsed ? 'Expandir' : 'Colapsar'}
-							>
-								<IoIosArrowForward className={`${collapsed ? '' : 'rotate-90'} transition-all`} />
-								<span className="mb-[2px]">{ collapsed ? 'ver questões' : 'esconder questões' }</span>
-							</button>
-							<div className={`${collapsed ? 'hidden' : ''}`}>
-								{questoes.map((q, i) =>
-									<Question key={i} question={q} level={level + 1} />
-								)}
-							</div>
-						</div>
-					}
-					<div className="flex justify-end">
-						<div className="flex items-center gap-2">
-							<label className="text-white">{questoes ? 'Total' : 'Pontuação'}:</label>
-							<input type="text" readOnly value={formatGrade(pontuacao)} className="w-16 bg-white bg-opacity-90" />
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	);
 }

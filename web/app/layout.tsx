@@ -17,7 +17,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "TestAI",
-  description: "IA corretora de provas",
+  description: "IA corretora de avaliações",
 };
 
 export default function RootLayout({
@@ -31,7 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <header className="bg-primary text-white p-3 tracking-widest">
+          <Link href="/">
             <h1 className="">Test.AI</h1>
+          </Link>
         </header>
         
         <ConfigProvider>

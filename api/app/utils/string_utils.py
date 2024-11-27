@@ -8,5 +8,9 @@ class StringBuilder:
             self.str += str + ('\n' * breaks)
         return self
     
+    # il = in-line (no break like)
+    def il(self, str: str = '', condition: bool = True):
+        self.ln(str, condition, 0)
+    
     def toString(self):
         return self.str
